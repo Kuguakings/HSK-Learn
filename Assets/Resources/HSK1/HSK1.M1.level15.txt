@@ -1,0 +1,10 @@
+groupId,hanzi,pinyin,english
+1,认识,rènshi,to meet,to know 
+2,年,nián,year
+3,大学,dàxué,college,university
+4,饭店,fàndiàn,hotel,restaurant
+5,出租车,chūzūchē,taxi,cab
+6,一起,yiqǐ,together
+7,高兴,gaoxìng,glad,happy
+8,听,tīng,to  listen
+9,飞机,fēijī,airplane

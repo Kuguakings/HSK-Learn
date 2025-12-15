@@ -1,0 +1,13 @@
+groupId,hanzi,pinyin,english
+1,请,qǐng,(polite)please
+2,问,wèn,to ask,to inquire
+3,今天,jīntiān,today
+4,号,hào,(for date of month)number
+5,月,yuè,month
+6,星期,xīngqī,week
+7,昨天,zuótiān,yesterday
+8,明天,míngtiān,tomorrow
+9,去,qù,to go
+10,学校,xuéxiào,school
+11,看,kàn,to look at,to watch, to read
+12,书,shū,book

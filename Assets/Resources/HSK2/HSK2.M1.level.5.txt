@@ -1,0 +1,15 @@
+groupId,hanzi,pinyin,english
+1,外面,wài miàn,outside
+2,准备,zhǔn bèi,to intend/to plan
+3,就,jiù,used to indicate a conclusion or resolution
+4,鱼,yú,fish
+5,吧,ba,used at the end of a sentence to indicate consultation, suggestion, request or command
+6,件,jiàn,(used for clothes among other items) piece
+7,还,hái,passably/fairly/rather
+8,可以,kě yǐ,not bad
+9,不错,bù cuò,pretty good
+10,考试,kǎo shì,test/exam
+11,意思,yì si,meaning
+12,咖啡,kā fēi,coffee
+13,对,duì,(used before a noun or pronoun) to/for
+14,以后,yǐ hòu,after/afterwards/later

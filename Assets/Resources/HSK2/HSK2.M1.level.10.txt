@@ -1,0 +1,11 @@
+groupId,hanzi,pinyin,english
+1,课,kè,class / lesson
+2,帮助,bāng zhù,to help / to assist / to aid
+3,别,bié,don't
+4,哥哥,gē ge,elder brother
+5,鸡蛋,jī dàn,(hen's) egg
+6,西瓜,xī guā,watermelon
+7,正在,zhèng zài,in the process of
+8,手机,shǒu jī,cell phone
+9,洗,xǐ,to wash / to bathe
+ 

@@ -1,0 +1,8 @@
+groupId,hanzi,pinyin,english
+1,你,nǐ,you
+2,好,hǎo,good/fine
+3,你们,nǐmen,(plural)you
+4,对不起,duìbuqǐ,to  be  sorry
+5,没关系,méi guānxi,that's OK,it doesn't matter
+6,上课,Shàngkè,Class begins
+7,下课,Xiàkè,Class is over

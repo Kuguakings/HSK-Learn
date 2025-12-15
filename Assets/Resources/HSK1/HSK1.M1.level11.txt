@@ -1,0 +1,12 @@
+groupId,hanzi,pinyin,english
+1,现在,xiànzài,now
+2,点,diǎn,o'clock
+3,分,fēn,minute
+4,中午,zhōngwǔ,noon
+5,吃饭,chī fàn,to eat a meal
+6,时候,shíhou,"time,moment"
+7,回,huí,"to come/go back, to return"
+8,我们,wǒmen,"we,us"
+9,电影,diànyǐng,"film,movie"
+10,住,zhù,"to live,to stay"
+11,前,qián,"before,earlier than"

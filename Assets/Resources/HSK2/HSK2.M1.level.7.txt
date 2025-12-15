@@ -1,0 +1,14 @@
+groupId,hanzi,pinyin,english
+1.教室,jiàoshì,classroom
+2.机场,jichǎng,airport
+3.路,lù,road,path,way
+4.离,lí,to be away from
+5.公司,gōngsī,company,firm
+6.远,yuǎn,far,distant
+7.公共汽车	,gōnggòngqichē,bus
+8.小时,xiǎoshí,hour
+9.慢,màn,slow
+10. 快,kuài,quick,fast
+11.过,guò,to pass (time),to spend(time)
+12 .走,zǒu,to walk
+13. 到,dào,to arrive,to reach

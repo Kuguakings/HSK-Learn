@@ -1,0 +1,6 @@
+groupId,hanzi,pinyin,english
+1,谢谢,xièxie,to thank
+2,不,bù,no,not
+3,不客气,búkèqi,you're welcome,  don't mention it
+4,再见,zàijiàn,to see you around
+

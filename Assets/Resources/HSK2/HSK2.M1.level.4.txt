@@ -1,0 +1,15 @@
+groupId,hanzi,pinyin,english
+1,生日,shēng rì,birthday
+2,快乐,kuài lè,happy/glad
+3,给,gěi,(used after a verb) to/for
+4,接,jiē,to receive/to take/to accept
+5,晚上,wǎn shang,evening/night
+6,问,wèn,to ask
+7,非常,fēi cháng,very/extremely
+8,开始,kāi shǐ,to begin/to start
+9,已经,yǐ jīng,already
+10,长,cháng,long
+11,两,liǎng,two
+12,帮,bāng,to help/to assist
+13,介绍,jiè shào,to introduce/to recommend
+ 

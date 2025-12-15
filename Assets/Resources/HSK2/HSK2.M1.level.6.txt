@@ -1,0 +1,14 @@
+groupId,hanzi,pinyin,english
+1,门,mén,door/gate
+2,外,wài,outer/outside
+3,自行车,zì xíng chē,bike
+4,羊肉,yáng ròu,mutton
+5,好吃,hǎo chī,delicious/yummy
+6,面条,miàn tiáo,noodles
+7,打篮球,dǎ lán qiú,to play basketball
+8,因为,yīn wèi,because/since
+9,所以,suǒ yǐ,so/therefore
+10,游泳,yóu yǒng,to swim
+11,经常,jīng cháng,often/frequently
+12,公斤,gōng jīn,kilogram
+13,姐姐,jiě jie,elder sister

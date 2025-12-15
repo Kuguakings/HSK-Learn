@@ -1,0 +1,16 @@
+groupId,hanzi,pinyin,english
+1,想,xiǎng,to  want,would  like
+2,喝,hē,to drink
+3,茶,chá,tea
+4,吃,chī,to eat
+5,米 饭,mǐfàn,cooked   rice
+6,下午,xiàwǔ,afternoon
+7,商店,shāngdiàn,shop,store
+8,买,mǎi,to buy,to purchase
+9,个,gè,ageneral measure word
+10,杯子bēizi,cup,glass
+11,这,zhè,this
+12,多少,duōshao,how many,how much
+13,钱,qián,money
+14,块,kuài,a unit of money,same as   "yuan"
+15,那,nà,that

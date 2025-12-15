@@ -1,0 +1,20 @@
+groupId,hanzi,pinyin,english
+1,东西,dōng xi,Thing / Stuff
+2,一点儿,yì diǎnr,A few / A little
+3,苹果,píng guǒ,Apple
+4,看见,kàn jiàn,To see
+5,先生,xiān sheng,Mr. / Sir
+6,开, kāi,To drive
+7,车, chē, Car / Vehicle
+8,回来,huí lai,To come back
+9,分钟, fēn zhōng,Minute
+10,后, hòu,After / Afterwards / Later
+11,衣服, yī fu,Clothes
+12,漂亮, piào liang,Beautiful / Pretty
+13,少,shǎo,Little / Few
+14,不少, bù shǎo,Quite a few / Many
+15,这些, zhè xiē, These
+16,都, dōu, Both / All
+17,朋友, péng you, Friend
+18,时间,shí jiān,Time
+  

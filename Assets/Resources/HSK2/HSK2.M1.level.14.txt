@@ -1,0 +1,12 @@
+groupId,hanzi,pinyin,english
+1,雪,xuě,snow
+2,雾,wù,fog/mist
+3,财,cái,wealth/money
+4,货,huò,goods/commodity
+5,百,bǎi,hundred
+6,晴, qíng,sunny/fine/clear
+7,虽然,suïrán,although/though
+8,次,cì,time
+9,玩儿, wán,to play/to have fun
+10,有意思, yǒu yisi interesing,fun
+11,但是,dànshì,but/still/yet

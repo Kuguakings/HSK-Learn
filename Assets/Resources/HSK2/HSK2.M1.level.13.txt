@@ -1,0 +1,17 @@
+groupId,hanzi,pinyin,english
+1,着,zhe,used to indicate a state
+2,手,shǒu,hand
+3,拿,ná,to hold/to take/to bring
+4,铅笔,qiānbǐn,pencil
+5,杨笑笑,Yáng Xiàoxiao,name of a person
+6,班,bän,class/grade/team
+7,长, zhǎng,to grow/to develop
+8,笑,xiào,to smile/to laugh 
+9,宾馆, binguǎn,holel
+10,一直,yizhí,straight/all along
+11,往,wǎng,to/towards
+12,路口, lùkǒu,crossing/crossroads
+13,新,xīn,new
+14,所,suǒ,place
+15,颜,yán,face/look
+16,须, xū,beard/mustache

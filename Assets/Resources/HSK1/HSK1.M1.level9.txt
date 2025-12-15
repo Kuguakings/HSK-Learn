@@ -1,0 +1,15 @@
+groupId,hanzi,pinyin,english
+1,小,xiǎo,small,little
+2,猫,māo,cat
+3,在,zài,to be in/on/at
+4,那儿,nàr,there
+5,狗,gǒu,dog
+6,椅子,yǐzi,chair
+7,下 面 ( 下 ),xiàmiàn(xià),under,below
+8,在,zài,in/on/at
+9,哪儿,nǎr,where
+10,工作,gōngzuò,to work;job
+11,儿子,érzi,son
+12,医院,yīyuàn,hospital
+13,医生,yīshēng,doctor
+14,爸爸,bàba,father

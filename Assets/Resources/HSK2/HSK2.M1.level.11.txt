@@ -1,0 +1,12 @@
+groupId,hanzi,pinyin,english
+1,唱歌,chàng gē,to sing
+2,男,nán,man/male
+3,女,nǚ,woman/female
+4,孩子,háizi,child/kid
+5,右边,yòu bian,right/right side
+6,比,bǐ,than/(superior or inferior) to
+7,便宜,pián yi,cheap/inexpensive
+8,说话,shuō huà,to speak/to say/to talk
+9,可能,kě néng,maybe/perhaps/probably
+10,去年,qù nián,last year
+11,姓,xìng,family name/surname

@@ -1,0 +1,13 @@
+groupId,hanzi,pinyin,english
+1,旅游,lǚyóu,to travel,to takea trip
+2,觉得,juéde,to think,to feel
+3,最,zuì,most,to the greatest extent
+4,为什么,wèishénme,why
+5,也,yě,also,too
+6,运动,yùndòng,sport;to take physicalexercise,to work out
+7,踢足球,tīzúqiú,to play football
+8,一起,yiqǐ,together
+9,要,yào,to want to,would like to
+10,新,xīn,new
+11,它,tā,it
+12,眼睛,yǎnjing,eye

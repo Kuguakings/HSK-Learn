@@ -1,0 +1,17 @@
+groupId,hanzi,pinyin,english
+1,手表,shǒubiǎo,watch
+2,千,qiān,thousand
+3,报纸,bàozhǐ,newspaper
+4,送,sòng,to send,to deliver
+5,一下,yíxià,used after a verb,indicatingan act or an attempt
+6,牛奶,niúnǎi,milk
+7,房间,fángjian,room
+8,丈夫,zhàngfu,husband
+9,旁边,pángbiān,beside
+10,真,zhēn,really,indeed
+11,粉色,fěnsè,pink
+12,粉,fěn,pink
+13,颜色,yánsè,color
+14,左边,zuǒbian,left side
+15,红色,hóngsè,red
+16,红,hóng,red

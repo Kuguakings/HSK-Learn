@@ -1,0 +1,10 @@
+groupId,hanzi,pinyin,english
+1,得,de,used after a verb or an adjective to introduce a complement of result or degree
+2,妻子,qī zi,wife
+3,雪,xuě,snow
+4,零,líng,zero
+5,度,dù,degree
+6,穿,chuān,to wear/to put on
+7,进,jìn,to enter/to come/go in
+8,弟弟,dì di,younger brother
+9,近,jìn,near/close

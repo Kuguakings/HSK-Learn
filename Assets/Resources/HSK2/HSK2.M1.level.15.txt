@@ -1,0 +1,13 @@
+groupId,hanzi,pinyin,english
+1,日,rì,day/date
+2,新年,xīnnián,New Year
+3,票,piào,ticket
+4,火车站, huǒchézhàn,railway station
+5,大家,dàjiā,all/everybody
+6,更,gèng,more/to a greater extent
+7,妹妹,mèimei,younger sister
+8,阴,yīn,overcast/cloudy
+9,岭,lǐng,ridge of a mountain
+10,岖 qū (used to describe mountain paths ,etc) rugged/rough
+11,天,tiān,sky
+12,夫,fū,husband

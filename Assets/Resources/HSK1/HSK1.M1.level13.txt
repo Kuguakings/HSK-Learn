@@ -1,0 +1,16 @@
+groupId,hanzi,pinyin,english
+1,喂,wèi,hello,hey
+2,也,yě,also, too
+3,学习/学,xuéxí /xué,to study, to learn
+4,大卫,Dàwèi,David
+5,上午,shàngwǔ,morning,before noon
+6,睡觉,shuì jào,to sleep
+7,电视,dianshì,television
+8,喜欢,xïhuan,to like,to be fond of
+9,给,gěi,to
+10,打电话,dǎ diànhuà,to make a phone call
+11,吧,ba,a modal particle used at the end of/a sentence to indicate consultation/a suggestion, request or command
+12,明,míng,next
+13,时,shí,time
+14,眼,yǎn,eye
+15,睡,shuì,to sleep

@@ -1,0 +1,12 @@
+groupId,hanzi,pinyin,english
+1.会     huì can,to be able to
+2 .说     shuō  to speak,to say
+3.妈 妈  mama  mother
+4.菜    cài    dish,cuisine
+5 .很    hěn  very,quite
+*6 . 好吃  hǎochī     adj.delicious,tasty
+7. 做     zuò      to make,to produce
+8. 写     xiě   to write
+9.汉 字  Hànzì   Chinese character
+10. 字     zì   character,word
+11. 怎 么  zěnme (indicating  nature,condition or  manner,etc.)how

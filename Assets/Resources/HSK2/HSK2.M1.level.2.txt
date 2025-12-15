@@ -1,0 +1,17 @@
+groupId,hanzi,pinyin,english
+1,生病,shēngbìng,to fall ill,to be sick
+2,每,měi,every,each
+3,早上,zǎoshang,morning
+4,跑步,pǎobù,to run,to jog
+5,起床,qǐchuáng,to get up,to get outof bed
+6,药,yào,medicine,drug
+7,身体,shēntǐ,body
+8,出院,chūyuàn,to leave hospital,tobe discharged fromhospital
+9,出,chū,to come/go out
+10,高,gāo,tall,high
+11,米,mǐ,meter
+12,知道,zhīdào,to know
+13,休息,xiūxi,to have or take a rest
+14,忙,máng,busy
+15,时间,shíjian,time
+

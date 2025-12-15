@@ -1,0 +1,17 @@
+groupId,hanzi,pinyin,english
+1,天气,tiānqì,weather
+2,怎么样,zěnmeyàng,(indicating nature, condition or manner) how
+3,太,tài,too, excessively
+4,热,rè,hot
+5,冷,lěng,cold
+6,下雨,xià yǔ,to rain
+7,下,xià,(of rain, snow, etc.) to fall
+8,雨,yǔ,rain
+9,小姐,xiǎojiě,miss, young lady
+10,来,lái,to come
+11,身体,shēntǐ,body
+12,爱,ài,to like, to love
+13,些,xiē,some, a few
+14,水果,shuǐguǒ,fruit
+15,水,shuǐ,water
+16,医生,yīshēng,doctor

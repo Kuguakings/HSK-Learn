@@ -1,0 +1,4 @@
+repository "HSK汉语学习@tj_abc_61df9a1e_02d4_44df_a2e7_02d24ddc1304@cloud.cn"
+  path "/"
+    br "/main"
+    co "/main"

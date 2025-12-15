@@ -1,0 +1,12 @@
+groupId,hanzi,pinyin,english
+1.错,cuò,wrong,incorrect
+2. 从,cóng,from
+3.跳舞,tiào wǔ,to dance
+4. 第一,dìyī,first
+5.希望,xīwàng,to hope,to wish
+6.问题,wèntí,question,problem
+7. 欢迎,huānyíng,to welcome
+8.上班,shàng bān,to work,to do
+9.懂,dǒng,to understand,to know
+10.完 ,wán,to finish,to end
+11.题,tí,question,problem

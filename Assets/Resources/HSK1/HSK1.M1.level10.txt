@@ -1,0 +1,14 @@
+groupId,hanzi,pinyin,english
+1,桌子,zhuō zi,desk/table
+2,上,shang,up/above
+3,电脑,diàn nǎo,computer
+4,和,hé,and
+5,本,běn,a measure word for books
+6,里,li,inner/inside/interior
+7,前面,qián miàn,front
+8,后面,hòu miàn,back
+9,这儿,zhè,here
+10,没有,méi yǒu,there is not
+11,能,néng,can/may
+12,坐,zuò,to sit/to be seated
+

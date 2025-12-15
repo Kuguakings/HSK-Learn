@@ -1,0 +1,11 @@
+groupId,hanzi,pinyin,english
+1,叫,jiào,to call,to be called
+2,什 么,shénme,what
+3,名字,míngzi,name
+4,我,wǒ,I,me
+5,是,shì,to  be
+6,老 师,lǎoshī,teacher
+7,吗,ma,used at the end ofa question
+8,学生,xuésheng,student
+9,人,rén,human,person
+  

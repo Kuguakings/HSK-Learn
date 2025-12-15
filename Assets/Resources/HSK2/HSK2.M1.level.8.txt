@@ -1,0 +1,11 @@
+groupId,hanzi,pinyin,english
+1.再,zài,again,once  more
+2.让,ràng,to let,to allow
+3.告诉,gàosù,to tell
+4. 等,děng,to  wait,to  await
+5.找,zhǎo,to look for
+6.事情,shìqing,thing,matter,affair
+7.服务员,fúwùyuán,attendant,waiter/waitress
+8. 白,bái,white
+9. 黑,hēi,black
+10. 贵,guì,expensive

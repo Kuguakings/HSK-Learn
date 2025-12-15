@@ -1,0 +1,11 @@
+groupId,hanzi,pinyin,english
+1,她,ta,she,her
+2,谁,shéi,who,whom
+3,的,de,used after an attribute
+4,汉语,Hànyǔ,Chinese (language)
+5,哪,nǎ,which
+6,国,guo,country,nation
+7,呢,ne,used at the end of a question
+8,他,tā,he,him
+9,同学,tóngxué,classmate
+10,朋友,péngyou,friend
