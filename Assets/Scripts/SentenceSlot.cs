@@ -1,13 +1,18 @@
-// SentenceSlot.cs (ĞÂ°æ)
+/// <summary>
+/// å¥å­æ§½ä½ç»„ä»¶ / Sentence Slot Component
+/// ç”¨äºå¥å­æ’åºæ¸¸æˆï¼Œæ¥æ”¶æ‹–æ‹½çš„è¯è¯­ / Used in sentence ordering game, receives dragged words
+/// </summary>
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class SentenceSlot : MonoBehaviour, IDropHandler
 {
-    public int slotOrder; // ¡¾ĞŞ¸Ä¡¿´Ó requiredOrder ¸ÄÎª slotOrder
-    public DraggableWord currentWord { get; private set; } // ¡¾ĞÂÔö¡¿¼ÇÂ¼µ±Ç°²ÛÄÚµÄ´ÊÓï
+    // å…¬å¼€å±æ€§ / Public Properties
+    public int slotOrder;  // æ§½ä½çš„é¡ºåºç´¢å¼• / Slot order index
+    public DraggableWord currentWord { get; private set; }  // å½“å‰æ§½ä½ä¸­çš„è¯è¯­ / Current word in this slot
 
-    private LinkupGameManager gameManager;
+    // ç§æœ‰å¼•ç”¨ / Private References
+    private LinkupGameManager gameManager;  // æ¸¸æˆç®¡ç†å™¨å¼•ç”¨ / Game manager reference
 
     public void Setup(LinkupGameManager manager, int order)
     {
@@ -22,13 +27,13 @@ public class SentenceSlot : MonoBehaviour, IDropHandler
             DraggableWord droppedWord = eventData.pointerDrag.GetComponent<DraggableWord>();
             if (droppedWord != null)
             {
-                // ¡¾ĞŞ¸Ä¡¿Í¨ÖªÖ÷¹ÜÀíÆ÷´¦Àí¸´ÔÓµÄ·ÅÖÃÂß¼­
+                // ï¿½ï¿½ï¿½Ş¸Ä¡ï¿½Í¨Öªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ·ï¿½ï¿½ï¿½ï¿½ß¼ï¿½
                 gameManager.HandleWordPlacement(droppedWord, this);
             }
         }
     }
 
-    // ¡¾ĞÂÔö¡¿¹«¿ªµÄ·ÅÖÃºÍÒÆ³ı·½·¨
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½Ãºï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½
     public void PlaceWord(DraggableWord word)
     {
         currentWord = word;

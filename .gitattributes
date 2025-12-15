@@ -1,17 +1,13 @@
-# 强制这些 WebGL 关键文件作为普通二进制文件处理，绝对不要用 LFS
+# 【核心修复】强制 WebGL 运行文件不使用 LFS，而是作为普通二进制文件
 *.wasm binary -text -filter=lfs -diff=lfs -merge=lfs
 *.data binary -text -filter=lfs -diff=lfs -merge=lfs
 *.framework.js binary -text -filter=lfs -diff=lfs -merge=lfs
 build.loader.js binary -text -filter=lfs -diff=lfs -merge=lfs
 
-# 确保文本文件被当作文本处理
+# 其他文件保持默认
 *.js text
 *.html text
 *.css text
 *.json text
-*.config text
-
-# 处理常见的图片资源 (如果它们特别大，超过100MB，你可能需要单独开启 LFS，但通常不需要)
-*.jpg binary
 *.png binary
-*.gif binary
+*.jpg binary

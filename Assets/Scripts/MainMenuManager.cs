@@ -1,73 +1,81 @@
-// MainMenuManager.cs (ÒÑ¸üĞÂ)
+// MainMenuManager.cs (ï¿½Ñ¸ï¿½ï¿½ï¿½)
 using System.Collections;
 using UnityEngine;
 
-// ¡¾ĞÂ¡¿ÎªÆ½Ì¨ÒÀÀµ±àÒëµ¼Èë
+// ï¿½ï¿½ï¿½Â¡ï¿½ÎªÆ½Ì¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ëµ¼ï¿½ï¿½
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-// --- ¡¾¡¾¡¾ĞÂ´úÂë µÚ0²½£ºµ¼Èë³¡¾°¹ÜÀí¡¿¡¿¡¿ ---
+// --- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï¿½ ï¿½ï¿½0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë³¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ---
 using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [Header("UI Ãæ°å")]
-    public GameObject mainPanel;
-    public GameObject modeSelectPanel;
-    public GameObject levelSelectPanel;
-    public GameObject settingsPanel;
-    public GameObject chapterSelectPanel;
+    #region åºåˆ—åŒ–å­—æ®µ / Serialized Fields
+    [Header("UI é¢æ¿ / UI Panels")]
+    public GameObject mainPanel;           // ä¸»é¢æ¿ / Main panel
+    public GameObject modeSelectPanel;     // æ¨¡å¼é€‰æ‹©é¢æ¿ / Mode selection panel
+    public GameObject levelSelectPanel;    // å…³å¡é€‰æ‹©é¢æ¿ / Level selection panel
+    public GameObject settingsPanel;       // è®¾ç½®é¢æ¿ / Settings panel
+    public GameObject chapterSelectPanel;  // ç« èŠ‚é€‰æ‹©é¢æ¿ / Chapter selection panel
 
-    // --- ¡¾¡¾¡¾ÒÑĞŞ¸Ä µÚ1²½£ºÌí¼Ó¡°ÔÙ¼û¡±Ãæ°åµÄÒıÓÃ¡¿¡¿¡¿ ---
-    [Header("ÍË³ö½çÃæ")]
-    public GameObject goodbyePanel; // <--- ÎÒÃÇĞèÒªÄúÔÚ Unity Àï´´½¨Ò»¸öÕâ¸öÃæ°å
+    [Header("é€€å‡ºç¡®è®¤ / Exit Confirmation")]
+    public GameObject goodbyePanel;        // é€€å‡ºç¡®è®¤é¢æ¿ï¼ˆéœ€åœ¨Unityä¸­åˆ›å»ºï¼‰/ Exit confirmation panel (create in Unity)
 
-    // --- ¡¾¡¾¡¾ĞÂ´úÂë µÚ1.5²½£ºÌí¼Ó¡°±à¼­Æ÷¡±³¡¾°µÄÒıÓÃ¡¿¡¿¡¿ ---
-    [Header("±à¼­Æ÷")]
-    public string levelEditorSceneName = "LevelEditorScene"; // Äã¿ÉÒÔ¸Ä³ÉÄãÊµ¼ÊµÄ³¡¾°Ãû
+    [Header("ç¼–è¾‘å™¨ / Editor")]
+    public string levelEditorSceneName = "LevelEditorScene"; // å…³å¡ç¼–è¾‘å™¨åœºæ™¯å / Level editor scene name
 
-    [Header("¹ÜÀíÆ÷ÒıÓÃ")]
-    public LevelSelectManager levelSelectManager;
-    public ChapterSelectManager chapterSelectManager;
+    [Header("ç®¡ç†å™¨å¼•ç”¨ / Manager References")]
+    public LevelSelectManager levelSelectManager;        // å…³å¡é€‰æ‹©ç®¡ç†å™¨ / Level select manager
+    public ChapterSelectManager chapterSelectManager;    // ç« èŠ‚é€‰æ‹©ç®¡ç†å™¨ / Chapter select manager
 
-    [Header("¶¯»­²ÎÊı")]
-    public float panelFadeDuration = 0.3f;
+    [Header("åŠ¨ç”»é…ç½® / Animation Configuration")]
+    public float panelFadeDuration = 0.3f;  // é¢æ¿æ·¡å…¥æ·¡å‡ºæ—¶é•¿ / Panel fade duration
+    #endregion
 
-    // CanvasGroup×é¼şµÄÒıÓÃ£¬ÓÃÓÚ¿ØÖÆUIµÄÍ¸Ã÷¶ÈºÍ½»»¥
+    #region ç§æœ‰å˜é‡ / Private Variables
+    // CanvasGroupç¼“å­˜ï¼šç”¨äºæ§åˆ¶UIé¢æ¿çš„é€æ˜åº¦å’Œäº¤äº’ / CanvasGroup cache: Controls UI panel transparency and interaction
     private CanvasGroup mainPanelCG;
     private CanvasGroup modeSelectPanelCG;
     private CanvasGroup levelSelectPanelCG;
     private CanvasGroup chapterSelectPanelCG;
-    private CanvasGroup settingsPanelCG; // ¡¾ĞÂÔö¡¿ÉèÖÃÃæ°åµÄCanvasGroupÒıÓÃ
+    private CanvasGroup settingsPanelCG;
+    private CanvasGroup goodbyePanelCG;
+    #endregion
 
-    // --- ¡¾¡¾¡¾ÒÑĞŞ¸Ä µÚ2²½£ºÌí¼Ó¡°ÔÙ¼û¡±Ãæ°åµÄCanvasGroup¡¿¡¿¡¿ ---
-    private CanvasGroup goodbyePanelCG; // <--- ĞÂÔö
-
+    /// <summary>
+    /// åˆå§‹åŒ–CanvasGroupç»„ä»¶ / Initialize CanvasGroup Components
+    /// åœ¨æ¸¸æˆå¼€å§‹æ—¶è·å–æˆ–è‡ªåŠ¨æ·»åŠ æ‰€æœ‰é¢æ¿çš„CanvasGroupç»„ä»¶ / Get or auto-add CanvasGroup for all panels at game start
+    /// </summary>
     void Awake()
     {
-        // ÔÚÓÎÏ·¿ªÊ¼Ê±£¬»ñÈ¡»ò×Ô¶¯Ìí¼ÓËùÓĞÃæ°åµÄCanvasGroup×é¼ş
+        // è·å–æˆ–æ·»åŠ CanvasGroupç»„ä»¶ï¼ˆç”¨äºæ§åˆ¶é¢æ¿æ·¡å…¥æ·¡å‡ºï¼‰/ Get or add CanvasGroup components (for fade control)
         mainPanelCG = mainPanel.GetComponent<CanvasGroup>() ?? mainPanel.AddComponent<CanvasGroup>();
         modeSelectPanelCG = modeSelectPanel.GetComponent<CanvasGroup>() ?? modeSelectPanel.AddComponent<CanvasGroup>();
         levelSelectPanelCG = levelSelectPanel.GetComponent<CanvasGroup>() ?? levelSelectPanel.AddComponent<CanvasGroup>();
         chapterSelectPanelCG = chapterSelectPanel.GetComponent<CanvasGroup>() ?? chapterSelectPanel.AddComponent<CanvasGroup>();
-        settingsPanelCG = settingsPanel.GetComponent<CanvasGroup>() ?? settingsPanel.AddComponent<CanvasGroup>(); // ¡¾ĞÂÔö¡¿
+        settingsPanelCG = settingsPanel.GetComponent<CanvasGroup>() ?? settingsPanel.AddComponent<CanvasGroup>();
 
-        // --- ¡¾¡¾¡¾ÒÑĞŞ¸Ä µÚ3²½£º³õÊ¼»¯¡°ÔÙ¼û¡±Ãæ°å¡¿¡¿¡¿ ---
-        // (ÕâÊÇ¡°Ìí¼Ó¡±µÄ£¬Ã»ÓĞ¸Ä±äÄúÒÑÓĞµÄ Awake ´úÂë)
+        // é€€å‡ºç¡®è®¤é¢æ¿ï¼ˆå¯é€‰ï¼‰/ Exit confirmation panel (optional)
         if (goodbyePanel != null)
         {
             goodbyePanelCG = goodbyePanel.GetComponent<CanvasGroup>() ?? goodbyePanel.AddComponent<CanvasGroup>();
         }
     }
 
+    /// <summary>
+    /// åˆå§‹åŒ–é¢æ¿çŠ¶æ€ / Initialize Panel States
+    /// ç¡®ä¿åªæ˜¾ç¤ºä¸»é¢æ¿ï¼Œå…¶ä»–é¢æ¿éƒ½éšè—ä¸”é€æ˜åº¦ä¸º0 / Ensure only main panel is visible, others hidden with 0 alpha
+    /// </summary>
     void Start()
     {
-        // ³õÊ¼»¯£¬È·±£Ö»ÏÔÊ¾Ö÷Ãæ°å£¬ÆäËûËùÓĞÃæ°å¶¼Òş²Ø²¢ÉèÖÃÎªÍ¸Ã÷
+        // æ˜¾ç¤ºä¸»é¢æ¿ / Show main panel
         mainPanel.SetActive(true);
         mainPanelCG.alpha = 1;
         mainPanelCG.interactable = true;
 
+        // éšè—æ‰€æœ‰å…¶ä»–é¢æ¿ / Hide all other panels
         modeSelectPanel.SetActive(false);
         modeSelectPanelCG.alpha = 0;
 
@@ -80,15 +88,12 @@ public class MainMenuManager : MonoBehaviour
             chapterSelectPanelCG.alpha = 0;
         }
 
-        // ¡¾ĞÂÔö¡¿È·±£ÉèÖÃÃæ°åÔÚ¿ªÊ¼Ê±Ò²ÍêÈ«Òş²Ø
         if (settingsPanel != null)
         {
             settingsPanel.SetActive(false);
             settingsPanelCG.alpha = 0;
         }
 
-        // --- ¡¾¡¾¡¾ÒÑĞŞ¸Ä µÚ4²½£ºÔÚ¿ªÊ¼Ê±Ò²Òş²Ø¡°ÔÙ¼û¡±Ãæ°å¡¿¡¿¡¿ ---
-        // (ÕâÊÇ¡°Ìí¼Ó¡±µÄ£¬Ã»ÓĞ¸Ä±äÄúÒÑÓĞµÄ Start ´úÂë)
         if (goodbyePanel != null)
         {
             goodbyePanel.SetActive(false);
@@ -96,13 +101,12 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-    #region Ò³ÃæÇĞ»»ºËĞÄÂß¼­
-    // (ÄúµÄ´úÂëÔ­·â²»¶¯)
+    #region é¡µé¢åˆ‡æ¢æ ¸å¿ƒé€»è¾‘ / Page Switching Core Logic
     public void ShowModeSelectPanel()
     {
         StartCoroutine(TransitionTo(mainPanelCG, modeSelectPanelCG));
     }
-    // (ÄúµÄ´úÂëÔ­·â²»¶¯)
+    // (ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
     public void StartMode(int mode)
     {
         if (chapterSelectManager != null)
@@ -111,71 +115,71 @@ public class MainMenuManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("ChapterSelectManager ÒıÓÃÎ´ÉèÖÃ£¡");
+            Debug.LogError("ChapterSelectManager ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½Ã£ï¿½");
         }
     }
 
-    // (ÄúµÄ´úÂëÔ­·â²»¶¯)
+    // (ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
     public void ShowSettingsPanel()
     {
         StartCoroutine(TransitionTo(mainPanelCG, settingsPanelCG));
     }
 
-    // (ÄúµÄ´úÂëÔ­·â²»¶¯)
+    // (ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
     public void HideSettingsPanel()
     {
         StartCoroutine(TransitionTo(settingsPanelCG, mainPanelCG));
     }
 
-    // --- ¡¾¡¾¡¾ĞÂ´úÂë µÚ2²½£ºÌí¼Ó¡°µã»÷±à¼­Æ÷¡±µÄ´¦Àíº¯Êı¡¿¡¿¡¿ ---
+    // --- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½ï¿½ï¿½ ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½à¼­ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ---
     /// <summary>
-    /// µ±µã»÷¡°¹Ø¿¨±à¼­Æ÷¡±°´Å¥Ê±µ÷ÓÃ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½à¼­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥Ê±ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void OnClick_ShowLevelEditor()
     {
-        Debug.Log($"×¼±¸½øÈë¹Ø¿¨±à¼­Æ÷³¡¾°: {levelEditorSceneName}");
+        Debug.Log($"×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½à¼­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {levelEditorSceneName}");
 
         if (LevelManager.instance != null)
         {
-            // Ê¹ÓÃ LevelManager µÄµ¥ÀıÀ´¼ÓÔØĞÂ³¡¾°£¨ÕâÑù¾Í»áÓĞµ­Èëµ­³öĞ§¹û£©
+            // Ê¹ï¿½ï¿½ LevelManager ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í»ï¿½ï¿½Ğµï¿½ï¿½ëµ­ï¿½ï¿½Ğ§ï¿½ï¿½ï¿½ï¿½
             LevelManager.instance.LoadScene(levelEditorSceneName);
         }
         else
         {
-            // ×÷Îª±£ÏÕ£¬Èç¹û LevelManager ¶ªÊ§£¬¾ÍÖ±½Ó¼ÓÔØ
-            Debug.LogError("LevelManager ÊµÀıÎ´ÕÒµ½£¡½«Ê¹ÓÃ SceneManager Ö±½Ó¼ÓÔØ¡£");
+            // ï¿½ï¿½Îªï¿½ï¿½ï¿½Õ£ï¿½ï¿½ï¿½ï¿½ LevelManager ï¿½ï¿½Ê§ï¿½ï¿½ï¿½ï¿½Ö±ï¿½Ó¼ï¿½ï¿½ï¿½
+            Debug.LogError("LevelManager Êµï¿½ï¿½Î´ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ SceneManager Ö±ï¿½Ó¼ï¿½ï¿½Ø¡ï¿½");
             SceneManager.LoadScene(levelEditorSceneName);
         }
     }
 
     #endregion
 
-    #region ·µ»Ø°´Å¥Âß¼­
-    // (ÄúµÄ´úÂëÔ­·â²»¶¯)
+    #region ï¿½ï¿½ï¿½Ø°ï¿½Å¥ï¿½ß¼ï¿½
+    // (ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
     public void ShowMainPanel() { StartCoroutine(TransitionTo(modeSelectPanelCG, mainPanelCG)); }
     public void ShowModeSelectPanelFromChapterSelect() { StartCoroutine(TransitionTo(chapterSelectPanelCG, modeSelectPanelCG)); }
     public void ShowChapterSelectFromLevelSelect() { StartCoroutine(TransitionTo(levelSelectPanelCG, chapterSelectPanelCG)); }
 
     #endregion
 
-    #region ¶¯»­Ğ­³Ì
-    // (ÄúµÄ´úÂëÔ­·â²»¶¯)
-    // Í¨ÓÃµÄÃæ°åÇĞ»»¶¯»­º¯Êı
+    #region ï¿½ï¿½ï¿½ï¿½Ğ­ï¿½ï¿½
+    // (ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
+    // Í¨ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private IEnumerator TransitionTo(CanvasGroup panelToHide, CanvasGroup panelToShow)
     {
-        // 1. µ­³öµ±Ç°Ãæ°å
+        // 1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½
         yield return StartCoroutine(FadeCanvasGroup(panelToHide, 1f, 0f, panelFadeDuration));
         panelToHide.interactable = false;
         panelToHide.blocksRaycasts = false;
         if (panelToHide.gameObject != null) panelToHide.gameObject.SetActive(false);
 
-        // 2. µ­ÈëĞÂÃæ°å
+        // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (panelToShow.gameObject != null) panelToShow.gameObject.SetActive(true);
         yield return StartCoroutine(FadeCanvasGroup(panelToShow, 0f, 1f, panelFadeDuration));
         panelToShow.interactable = true;
         panelToShow.blocksRaycasts = true;
     }
-    // (ÄúµÄ´úÂëÔ­·â²»¶¯)
+    // (ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
     private IEnumerator FadeOutAndShowChapterSelect(CanvasGroup panelToHide, GameMode mode)
     {
         yield return StartCoroutine(FadeCanvasGroup(panelToHide, 1f, 0f, panelFadeDuration));
@@ -185,13 +189,13 @@ public class MainMenuManager : MonoBehaviour
 
         chapterSelectManager.Show(mode);
     }
-    // (ÄúµÄ´úÂëÔ­·â²»¶¯)
-    // ÕâÊÇ¡°ÍêÃÀ°æ¡±µÄ FadeCanvasGroup Ğ­³Ì
+    // (ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
+    // ï¿½ï¿½ï¿½Ç¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ¡±ï¿½ï¿½ FadeCanvasGroup Ğ­ï¿½ï¿½
     private IEnumerator FadeCanvasGroup(CanvasGroup cg, float startAlpha, float endAlpha, float duration)
     {
         float elapsedTime = 0f;
 
-        // ¶¯»­¿ªÊ¼Ê±£¬Á¢¼´×èÖ¹½»»¥£¬·ÀÖ¹ÔÚ¶¯»­¹ı³ÌÖĞµã»÷
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½ï¿½
         cg.interactable = false;
 
         while (elapsedTime < duration)
@@ -201,71 +205,71 @@ public class MainMenuManager : MonoBehaviour
             yield return null;
         }
 
-        // È·±£¶¯»­½áÊøÊ±ÔÚ×îÖÕ×´Ì¬
+        // È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
         cg.alpha = endAlpha;
 
-        if (endAlpha > 0) // Èç¹ûÊÇµ­Èë (Í¸Ã÷¶È´óÓÚ0)
+        if (endAlpha > 0) // ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ (Í¸ï¿½ï¿½ï¿½È´ï¿½ï¿½ï¿½0)
         {
             cg.interactable = true;
-            cg.blocksRaycasts = true; // ÔÊĞíÉäÏß¼ì²â (ÔÊĞíµã»÷)
+            cg.blocksRaycasts = true; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         }
-        else // Èç¹ûÊÇµ­³ö (Í¸Ã÷¶ÈÎª0)
+        else // ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ (Í¸ï¿½ï¿½ï¿½ï¿½Îª0)
         {
             cg.interactable = false;
-            cg.blocksRaycasts = false; // ×èÖ¹ÉäÏß¼ì²â (²»ÔÊĞíµã»÷)
+            cg.blocksRaycasts = false; // ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         }
     }
 
     #endregion
 
-    // --- ¡¾¡¾¡¾ÒÑĞŞ¸Ä µÚ5²½£ºÌæ»»ÄúµÄ¡°ÍË³ö¡±º¯Êı¡¿¡¿¡¿ ---
-    #region ÓÎÏ·ÍË³ö
+    // --- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½ ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½ï¿½æ»»ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½Ë³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ---
+    #region ï¿½ï¿½Ï·ï¿½Ë³ï¿½
 
     /// <summary>
-    /// ÕâÊÇĞÂµÄ¡°ÍË³öÓÎÏ·¡±º¯Êı£¬ËüÄÜÖÇÄÜÇø·ÖÆ½Ì¨
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ¡ï¿½ï¿½Ë³ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨
     /// </summary>
     public void ExitGame()
     {
-        Debug.Log("¡°ÍË³öÓÎÏ·¡±°´Å¥±»µã»÷£¡");
+        Debug.Log("ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½Å¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 
-        // 1. Èç¹ûÔÚ Unity ±à¼­Æ÷ÖĞ
+        // 1. ï¿½ï¿½ï¿½ï¿½ï¿½ Unity ï¿½à¼­ï¿½ï¿½ï¿½ï¿½
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 
-        // 2. Èç¹ûÔÚ WebGL (ÍøÒ³) Æ½Ì¨ÖĞ
+        // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ WebGL (ï¿½ï¿½Ò³) Æ½Ì¨ï¿½ï¿½
 #elif UNITY_WEBGL
-        // ÎÒÃÇµ÷ÓÃ¡°ÏÔÊ¾ÔÙ¼ûÃæ°å¡±µÄĞ­³Ì£¬¶ø²»ÊÇ Application.Quit()£¡
-        // ¡¾ÖØÒª¡¿ÎÒÃÇ±ØĞëÅªÇå³şµ±Ç°ÊÇÄÄ¸öÃæ°å¿ª×Å£¬È»ºó´ÓËü¹ı¶É
+        // ï¿½ï¿½ï¿½Çµï¿½ï¿½Ã¡ï¿½ï¿½ï¿½Ê¾ï¿½Ù¼ï¿½ï¿½ï¿½å¡±ï¿½ï¿½Ğ­ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Application.Quit()ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ç±ï¿½ï¿½ï¿½Åªï¿½ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½å¿ªï¿½Å£ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         StartCoroutine(ShowGoodbyePanel());
 
-        // 3. ÔÚËùÓĞ¡°ÆäËû¡±Æ½Ì¨ (±ÈÈç PC¡¢Mac¡¢ÊÖ»ú App)
+        // 3. ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½Ì¨ (ï¿½ï¿½ï¿½ï¿½ PCï¿½ï¿½Macï¿½ï¿½ï¿½Ö»ï¿½ App)
 #else
-        // °²È«µØÍË³ö
+        // ï¿½ï¿½È«ï¿½ï¿½ï¿½Ë³ï¿½
         Application.Quit();
 #endif
     }
 
     /// <summary>
-    /// ÕâÊÇÒ»¸öĞÂº¯Êı£¬ÓÃÓÚÔÚ WebGL Æ½Ì¨ÉÏÏÔÊ¾¡°ÔÙ¼û¡±Ãæ°å
-    /// Ëü»á×Ô¶¯¼ì²âµ±Ç°ÊÇÖ÷²Ëµ¥»¹ÊÇÉèÖÃ²Ëµ¥£¬²¢´ÓÄÇÀï¿ªÊ¼µ­³ö
-    /// ¡¾×¢Òâ¡¿Ëü»áÊ¹ÓÃÄúÒÑÓĞµÄ TransitionTo Ğ­³Ì£¡
+    /// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ WebGL Æ½Ì¨ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ù¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½âµ±Ç°ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã²Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿ªÊ¼ï¿½ï¿½ï¿½ï¿½
+    /// ï¿½ï¿½×¢ï¿½â¡¿ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğµï¿½ TransitionTo Ğ­ï¿½Ì£ï¿½
     /// </summary>
     private IEnumerator ShowGoodbyePanel()
     {
-        // ¼ì²éµ±Ç°ÄÄ¸öÃæ°åÊÇ¼¤»îµÄ (Í¸Ã÷¶ÈÎª1)
+        // ï¿½ï¿½éµ±Ç°ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½Ç¼ï¿½ï¿½ï¿½ï¿½ (Í¸ï¿½ï¿½ï¿½ï¿½Îª1)
         if (mainPanelCG.alpha == 1)
         {
-            // ´Ó Ö÷²Ëµ¥ -> µ­Èëµ½ -> ÔÙ¼ûÃæ°å
+            // ï¿½ï¿½ ï¿½ï¿½ï¿½Ëµï¿½ -> ï¿½ï¿½ï¿½ëµ½ -> ï¿½Ù¼ï¿½ï¿½ï¿½ï¿½
             yield return StartCoroutine(TransitionTo(mainPanelCG, goodbyePanelCG));
         }
         else if (settingsPanelCG.alpha == 1)
         {
-            // ´Ó ÉèÖÃ²Ëµ¥ -> µ­Èëµ½ -> ÔÙ¼ûÃæ°å
+            // ï¿½ï¿½ ï¿½ï¿½ï¿½Ã²Ëµï¿½ -> ï¿½ï¿½ï¿½ëµ½ -> ï¿½Ù¼ï¿½ï¿½ï¿½ï¿½
             yield return StartCoroutine(TransitionTo(settingsPanelCG, goodbyePanelCG));
         }
         else
         {
-            // ×÷Îª¡°±£ÏÕ¡±£¬Èç¹ûÆäËûÃæ°å¶¼¹ØÁË£¬¾ÍÖ±½ÓÇ¿ĞĞÏÔÊ¾¡°ÔÙ¼û¡±Ãæ°å
+            // ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½Õ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å¶¼ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½Ù¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             mainPanel.SetActive(false);
             settingsPanel.SetActive(false);
             modeSelectPanel.SetActive(false);

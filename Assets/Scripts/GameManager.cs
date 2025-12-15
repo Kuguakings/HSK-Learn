@@ -1,4 +1,5 @@
-// GameManager.cs (V-TestPlay.3 - ĞŞ¸´¡°·µ»ØÖ÷²Ëµ¥¡±Âß¼­)
+// GameManager.cs - æ¶ˆæ¶ˆä¹æ¸¸æˆç®¡ç†å™¨ / Match-3 Game Manager
+// Manages word matching gameplay, page transitions, and UI interactions
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,65 +10,74 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    // (ÄÚ²¿Êı¾İ½á¹¹, V-TestPlay.2 ²»±ä)
-    #region ÄÚ²¿Êı¾İ½á¹¹ (V-TestPlay.2 ²»±ä)
-    // (É¾³ıÁËÄÚ²¿µÄ TileType ºÍ TileInfo)
+    #region å†…éƒ¨æ•°æ®ç»“æ„ / Internal Data Structures
+    /// <summary>
+    /// è¯è¯­æ•°æ®ç±» / Word Data Class
+    /// å­˜å‚¨å•ä¸ªè¯è¯­çš„æ‰€æœ‰ä¿¡æ¯ï¼ˆæ±‰å­—ã€æ‹¼éŸ³ã€è‹±æ–‡ï¼‰
+    /// Stores all information for a single word (Chinese characters, pinyin, English)
+    /// </summary>
     public class WordData
     {
-        public int groupId;
-        public string hanzi;
-        public string pinyin;
-        public string english;
+        public int groupId;      // åˆ†ç»„IDï¼Œç›¸åŒIDçš„æ±‰å­—/æ‹¼éŸ³/è‹±æ–‡å±äºåŒä¸€ç»„ / Group ID, same ID means they belong together
+        public string hanzi;     // æ±‰å­— / Chinese characters
+        public string pinyin;    // æ‹¼éŸ³ / Pinyin
+        public string english;   // è‹±æ–‡ç¿»è¯‘ / English translation
     }
     #endregion
 
-    // (±äÁ¿, V-TestPlay ²»±ä)
-    #region ±äÁ¿ (V-TestPlay ²»±ä)
-    [Header("²¼¾ÖÉèÖÃ")]
-    public int totalRows = 5;
-    public int totalColumns = 5;
-    [Header("ÓÎÏ·ºËĞÄÔªËØ")]
-    public GameObject wordTilePrefab;
-    public Transform gridParent;
-    public Canvas rootCanvas;
-    [Header("·ÖÒ³¼ÓÔØ")]
-    public int wordsPerPage = 5;
-    [Header("¶¯»­²ÎÊı")]
-    public float fadeDuration = 0.3f;
-    public float moveDuration = 0.4f;
-    public float visualStaggerDelay = 0.03f;
-    public float audioStaggerDelay = 0.1f;
-    [Header("ÓÎÏ·UI")]
-    public TextMeshProUGUI levelTitleText;
-    public TextMeshProUGUI timerText;
-    public TextMeshProUGUI scoreText;
-    public GameObject pausePanel;
-    [Header("Ê¤ÀûUI")]
-    public GameObject levelCompletePanel;
-    public GameObject gameCompletePanel;
-    public TextMeshProUGUI finalTimeText_LevelComplete;
-    public TextMeshProUGUI finalScoreText_LevelComplete;
-    public TextMeshProUGUI finalTimeText_GameComplete;
-    public TextMeshProUGUI finalScoreText_GameComplete;
+    #region åºåˆ—åŒ–å­—æ®µ / Serialized Fields
+    [Header("ç½‘æ ¼é…ç½® / Grid Configuration")]
+    public int totalRows = 5;        // ç½‘æ ¼è¡Œæ•° / Number of grid rows
+    public int totalColumns = 5;     // ç½‘æ ¼åˆ—æ•° / Number of grid columns
+    
+    [Header("æ¸¸æˆé¢„åˆ¶ä½“å…ƒç´  / Game Prefab Elements")]
+    public GameObject wordTilePrefab;  // è¯è¯­æ–¹å—é¢„åˆ¶ä½“ / Word tile prefab
+    public Transform gridParent;       // ç½‘æ ¼çˆ¶ç‰©ä½“ / Grid parent transform
+    public Canvas rootCanvas;          // æ ¹ç”»å¸ƒ / Root canvas
+    
+    [Header("åˆ†é¡µé…ç½® / Pagination Configuration")]
+    public int wordsPerPage = 5;       // æ¯é¡µè¯è¯­æ•°é‡ / Words per page
+    
+    [Header("åŠ¨ç”»é…ç½® / Animation Configuration")]
+    public float fadeDuration = 0.3f;         // æ·¡å…¥æ·¡å‡ºæ—¶é•¿ / Fade duration
+    public float moveDuration = 0.4f;         // ç§»åŠ¨åŠ¨ç”»æ—¶é•¿ / Move animation duration
+    public float visualStaggerDelay = 0.03f;  // è§†è§‰é”™å¼€å»¶è¿Ÿ / Visual stagger delay
+    public float audioStaggerDelay = 0.1f;    // éŸ³é¢‘é”™å¼€å»¶è¿Ÿ / Audio stagger delay
+    
+    [Header("æ¸¸æˆUI / Game UI")]
+    public TextMeshProUGUI levelTitleText;  // å…³å¡æ ‡é¢˜æ–‡æœ¬ / Level title text
+    public TextMeshProUGUI timerText;       // è®¡æ—¶å™¨æ–‡æœ¬ / Timer text
+    public TextMeshProUGUI scoreText;       // åˆ†æ•°æ–‡æœ¬ / Score text
+    public GameObject pausePanel;           // æš‚åœé¢æ¿ / Pause panel
+    
+    [Header("èƒœåˆ©UI / Victory UI")]
+    public GameObject levelCompletePanel;         // å…³å¡å®Œæˆé¢æ¿ / Level complete panel
+    public GameObject gameCompletePanel;          // æ¸¸æˆå®Œæˆé¢æ¿ / Game complete panel
+    public TextMeshProUGUI finalTimeText_LevelComplete;   // å…³å¡å®Œæˆæœ€ç»ˆæ—¶é—´ / Level complete final time
+    public TextMeshProUGUI finalScoreText_LevelComplete;  // å…³å¡å®Œæˆæœ€ç»ˆåˆ†æ•° / Level complete final score
+    public TextMeshProUGUI finalTimeText_GameComplete;    // æ¸¸æˆå®Œæˆæœ€ç»ˆæ—¶é—´ / Game complete final time
+    public TextMeshProUGUI finalScoreText_GameComplete;   // æ¸¸æˆå®Œæˆæœ€ç»ˆåˆ†æ•° / Game complete final score
 
-    [Header("¡¾¡¾¡¾ÊÔÍæÄ£Ê½ UI¡¿¡¿¡¿")]
-    public GameObject testPlayPausePanel;
-    public GameObject testPlayCompletePanel;
+    [Header("å…³å¡ç¼–è¾‘å™¨æµ‹è¯•æ¨¡å¼ UIé¢æ¿ / Level Editor Test Mode UI Panels")]
+    public GameObject testPlayPausePanel;      // æµ‹è¯•æ¨¡å¼æš‚åœé¢æ¿ / Test mode pause panel
+    public GameObject testPlayCompletePanel;   // æµ‹è¯•æ¨¡å¼å®Œæˆé¢æ¿ / Test mode complete panel
 
-    [Header("¿ª·¢Óë²âÊÔ")]
-    public TextAsset testLevelAsset;
+    [Header("æµ‹è¯•æ•°æ® / Test Data")]
+    public TextAsset testLevelAsset;  // æµ‹è¯•å…³å¡æ•°æ®æ–‡ä»¶ / Test level data file
 
-    // (ÄÚ²¿±äÁ¿, V-TestPlay ²»±ä)
-    private List<WordData> allWordsForLevel = new List<WordData>();
-    private List<WordTile> selectedTiles = new List<WordTile>();
-    private int currentPage = 0;
-    private int totalPages;
-    private bool isTransitioning = false;
-    private bool isChecking = false;
-    private int currentScore = 0;
-    private float elapsedTime = 0f;
-    private bool isLevelComplete = false;
-    private bool isPaused = false;
+    // å†…éƒ¨å˜é‡ / Internal Variables
+    private List<WordData> allWordsForLevel = new List<WordData>();  // å½“å‰å…³å¡æ‰€æœ‰è¯è¯­ / All words for current level
+    private List<WordTile> selectedTiles = new List<WordTile>();     // å·²é€‰ä¸­çš„æ–¹å— / Selected tiles
+    private int currentPage = 0;          // å½“å‰é¡µç  / Current page index
+    private int totalPages;               // æ€»é¡µæ•° / Total pages
+    private bool isTransitioning = false; // æ˜¯å¦æ­£åœ¨è½¬åœº / Is transitioning
+    private bool isChecking = false;      // æ˜¯å¦æ­£åœ¨æ£€æŸ¥åŒ¹é… / Is checking match
+    private int currentScore = 0;         // å½“å‰åˆ†æ•° / Current score
+    private float elapsedTime = 0f;       // å·²ç”¨æ—¶é—´ / Elapsed time
+    private bool isLevelComplete = false; // å…³å¡æ˜¯å¦å®Œæˆ / Is level complete
+    private bool isPaused = false;        // æ˜¯å¦æš‚åœ / Is paused
+    
+    // UIç”»å¸ƒç»„ç¼“å­˜ / UI CanvasGroup cache
     private CanvasGroup pausePanelCG;
     private CanvasGroup levelCompletePanelCG;
     private CanvasGroup gameCompletePanelCG;
@@ -75,7 +85,10 @@ public class GameManager : MonoBehaviour
     private CanvasGroup testPlayCompletePanelCG;
     #endregion
 
-    // (Awake, V-TestPlay ²»±ä)
+    /// <summary>
+    /// åˆå§‹åŒ–CanvasGroupç»„ä»¶ / Initialize CanvasGroup components
+    /// åœ¨Startä¹‹å‰è·å–æˆ–æ·»åŠ å¿…è¦çš„CanvasGroupç»„ä»¶ / Get or add necessary CanvasGroup components before Start
+    /// </summary>
     void Awake()
     {
         if (pausePanel != null) { pausePanelCG = pausePanel.GetComponent<CanvasGroup>() ?? pausePanel.AddComponent<CanvasGroup>(); }
@@ -85,37 +98,45 @@ public class GameManager : MonoBehaviour
         if (testPlayCompletePanel != null) { testPlayCompletePanelCG = testPlayCompletePanel.GetComponent<CanvasGroup>() ?? testPlayCompletePanel.AddComponent<CanvasGroup>(); }
     }
 
-    // (Start, V-TestPlay ²»±ä)
+    /// <summary>
+    /// æ¸¸æˆåˆå§‹åŒ– / Game Initialization
+    /// é‡ç½®æ—¶é—´ç¼©æ”¾ã€éšè—UIé¢æ¿ã€åŠ è½½å…³å¡æ•°æ® / Reset time scale, hide UI panels, load level data
+    /// </summary>
     void Start()
     {
-        Time.timeScale = 1f;
+        Time.timeScale = 1f;  // ç¡®ä¿æ—¶é—´æ­£å¸¸æµåŠ¨ / Ensure time flows normally
+        
+        // éšè—æ‰€æœ‰UIé¢æ¿ / Hide all UI panels
         if (levelCompletePanel != null) { levelCompletePanel.SetActive(false); if (levelCompletePanelCG != null) levelCompletePanelCG.alpha = 0f; }
         if (gameCompletePanel != null) { gameCompletePanel.SetActive(false); if (gameCompletePanelCG != null) gameCompletePanelCG.alpha = 0f; }
         if (pausePanel != null) pausePanel.SetActive(false);
         if (testPlayPausePanel != null) testPlayPausePanel.SetActive(false);
         if (testPlayCompletePanel != null) testPlayCompletePanel.SetActive(false);
 
+        // åŠ è½½å…³å¡æ•°æ® / Load level data
         LevelData dataToLoad = LevelManager.selectedLevelData;
         if (dataToLoad == null)
         {
-            Debug.LogWarning("Î´ÕÒµ½ LevelManager.selectedLevelData£¬ÒÑ½øÈë¡¾²âÊÔÄ£Ê½¡¿¡£");
+            // æµ‹è¯•æ¨¡å¼ / Test mode
+            Debug.LogWarning("æœªæ‰¾åˆ° LevelManager.selectedLevelDataï¼Œå·²è¿›å…¥ã€æµ‹è¯•æ¨¡å¼ã€‘/ No LevelManager.selectedLevelData found, entering test mode");
             if (testLevelAsset != null)
             {
-                levelTitleText.text = "²âÊÔ¹Ø¿¨";
+                levelTitleText.text = "æµ‹è¯•å…³å¡ / Test Level";
                 LoadLevelDataFromAsset(testLevelAsset);
             }
             else
             {
-                Debug.LogError("¡¾²âÊÔÄ£Ê½¡¿´íÎó: ÇëÉèÖÃ²âÊÔ¹Ø¿¨!");
+                Debug.LogError("æµ‹è¯•æ¨¡å¼å¯åŠ¨å¤±è´¥: æœªæŒ‡å®šæµ‹è¯•å…³å¡! / Test mode failed: No test level assigned!");
                 return;
             }
         }
         else
         {
-            levelTitleText.text = dataToLoad.chapter + " - µÚ " + dataToLoad.level + " ¹Ø";
+            // æ­£å¸¸æ¨¡å¼ï¼šä»LevelManageråŠ è½½ / Normal mode: Load from LevelManager
+            levelTitleText.text = dataToLoad.chapter + " - ç¬¬ " + dataToLoad.level + " å…³";
             if (LevelManager.isTestPlayMode)
             {
-                levelTitleText.text += " (ÊÔÍæ)";
+                levelTitleText.text += " (æµ‹è¯• / Test)";
             }
             LoadLevelDataFromFirebase(dataToLoad);
         }
@@ -128,7 +149,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // (Update, V-TestPlay ²»±ä)
+    // (Update, V-TestPlay ï¿½ï¿½ï¿½ï¿½)
     void Update()
     {
         if (isPaused || isLevelComplete || isChecking || isTransitioning) return;
@@ -136,14 +157,14 @@ public class GameManager : MonoBehaviour
         elapsedTime += Time.deltaTime;
         int minutes = (int)(elapsedTime / 60);
         int seconds = (int)(elapsedTime % 60);
-        timerText.text = "Ê±¼ä: " + string.Format("{0:00}:{1:00}", minutes, seconds);
+        timerText.text = "Ê±ï¿½ï¿½: " + string.Format("{0:00}:{1:00}", minutes, seconds);
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause();
         }
     }
 
-    // (LoadLevelDataFromAsset, V-TestPlay ²»±ä)
+    // (LoadLevelDataFromAsset, V-TestPlay ï¿½ï¿½ï¿½ï¿½)
     void LoadLevelDataFromAsset(TextAsset textAsset)
     {
         allWordsForLevel.Clear();
@@ -167,13 +188,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // (LoadLevelDataFromFirebase, V-TestPlay ²»±ä)
+    // (LoadLevelDataFromFirebase, V-TestPlay ï¿½ï¿½ï¿½ï¿½)
     void LoadLevelDataFromFirebase(LevelData data)
     {
         allWordsForLevel.Clear();
         if (data.content_mode_1 == null || data.content_mode_1.Count == 0)
         {
-            Debug.LogError($"´íÎó£º¹Ø¿¨ {data.id} Ã»ÓĞ Mode 1 (content_mode_1) Êı¾İ£¡");
+            Debug.LogError($"ï¿½ï¿½ï¿½ó£º¹Ø¿ï¿½ {data.id} Ã»ï¿½ï¿½ Mode 1 (content_mode_1) ï¿½ï¿½ï¿½İ£ï¿½");
             return;
         }
         foreach (Mode1Content firebaseWord in data.content_mode_1)
@@ -189,19 +210,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // ¡¾¡¾¡¾¡¾¡¾¡¾ Ìæ»»Äã¾ÉµÄ HandleLevelComplete() º¯Êı ¡¿¡¿¡¿¡¿¡¿¡¿
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æ»»ï¿½ï¿½Éµï¿½ HandleLevelComplete() ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     void HandleLevelComplete()
     {
         isLevelComplete = true;
         int minutes = (int)(elapsedTime / 60);
         int seconds = (int)(elapsedTime % 60);
-        string finalTimeStr = string.Format("ÓÃÊ±: {0:00}:{1:00}", minutes, seconds);
-        string finalScoreStr = "»ı·Ö: " + currentScore;
+        string finalTimeStr = string.Format("ï¿½ï¿½Ê±: {0:00}:{1:00}", minutes, seconds);
+        string finalScoreStr = "ï¿½ï¿½ï¿½ï¿½: " + currentScore;
 
-        // ¡¾¡¾¡¾ ÒÑĞŞ¸Ä ¡¿¡¿¡¿£º¼ì²é ÊÔÍæÄ£Ê½ »ò ¹ÜÀíÔ±µÇÂ¼
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ş¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½Â¼
         if (LevelManager.isTestPlayMode || LevelManager.IsAdmin)
         {
-            Debug.Log("ÊÔÍæ/¹ÜÀíÔ±Í¨¹ı£¡ÏÔÊ¾ÊÔÍæ¹ı¹ØÃæ°å¡£");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½Ô±Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å¡£");
             if (testPlayCompletePanel != null)
             {
                 testPlayCompletePanel.SetActive(true);
@@ -224,14 +245,14 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    // ¡¾¡¾¡¾¡¾¡¾¡¾ Ìæ»»½áÊø ¡¿¡¿¡¿¡¿¡¿¡¿
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æ»»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    // ¡¾¡¾¡¾¡¾¡¾¡¾ Ìæ»»Äã¾ÉµÄ TogglePause() º¯Êı ¡¿¡¿¡¿¡¿¡¿¡¿
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æ»»ï¿½ï¿½Éµï¿½ TogglePause() ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public void TogglePause()
     {
         isPaused = !isPaused;
 
-        // ¡¾¡¾¡¾ ÒÑĞŞ¸Ä ¡¿¡¿¡¿£º¼ì²é ÊÔÍæÄ£Ê½ »ò ¹ÜÀíÔ±µÇÂ¼
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ş¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä£Ê½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½Â¼
         if (LevelManager.isTestPlayMode || LevelManager.IsAdmin)
         {
             if (isPaused)
@@ -263,13 +284,13 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    // ¡¾¡¾¡¾¡¾¡¾¡¾ Ìæ»»½áÊø ¡¿¡¿¡¿¡¿¡¿¡¿
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æ»»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
-    #region ÆäÓàËùÓĞº¯Êı (Ô­·â²»¶¯)
+    #region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğºï¿½ï¿½ï¿½ (Ô­ï¿½â²»ï¿½ï¿½)
 
-    // (ÊÔÍæ°´Å¥ÏìÓ¦º¯Êı, V-TestPlay.3 ĞŞ¸Ä)
-    #region ÊÔÍæ°´Å¥ÏìÓ¦º¯Êı
+    // (ï¿½ï¿½ï¿½æ°´Å¥ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½, V-TestPlay.3 ï¿½Ş¸ï¿½)
+    #region ï¿½ï¿½ï¿½æ°´Å¥ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½
     public void OnClick_TestPlay_Continue()
     {
         TogglePause();
@@ -291,22 +312,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // --- ¡¾¡¾¡¾V-TestPlay.3 ºËĞÄĞŞ¸Ä¡¿¡¿¡¿ ---
+    // --- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½V-TestPlay.3 ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ ---
     public void OnClick_TestPlay_ReturnToMainMenu()
     {
         Time.timeScale = 1f;
         if (LevelManager.instance != null)
         {
-            // (¾É) LevelManager.instance.LoadMainMenu();
-            // (ĞÂ) µ÷ÓÃ¡°ÊÔÍæ³É¹¦¡±°æµÄ·µ»ØÖ÷²Ëµ¥º¯Êı
+            // (ï¿½ï¿½) LevelManager.instance.LoadMainMenu();
+            // (ï¿½ï¿½) ï¿½ï¿½ï¿½Ã¡ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½
             LevelManager.instance.LoadMainMenuAfterTestWin();
         }
     }
-    // --- ¡¾¡¾¡¾V-TestPlay.3 ½áÊø¡¿¡¿¡¿ ---
+    // --- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½V-TestPlay.3 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ---
 
     #endregion
 
-    // (LoadPage, SetupPageCoroutine, ... , V-TestPlay.2 ²»±ä)
+    /// <summary>
+    /// åŠ è½½æŒ‡å®šé¡µç çš„å†…å®¹ / Load Content for Specified Page
+    /// </summary>
+    /// <param name="pageIndex">é¡µç ç´¢å¼• / Page index</param>
     void LoadPage(int pageIndex)
     {
         isTransitioning = true;
@@ -364,8 +388,8 @@ public class GameManager : MonoBehaviour
         if (activeTileCount == 0 && !isLevelComplete)
         {
             currentPage++;
-            if (currentPage < totalPages) { Debug.Log($"Ò³Ãæ {currentPage - 1} Íê³É! ¼ÓÔØÏÂÒ»Ò³: {currentPage}"); LoadPage(currentPage); }
-            else { Debug.Log("ËùÓĞÒ³Ãæ¾ùÒÑÍê³É£¬¹Ø¿¨Ê¤Àû£¡"); HandleLevelComplete(); }
+            if (currentPage < totalPages) { Debug.Log($"Ò³ï¿½ï¿½ {currentPage - 1} ï¿½ï¿½ï¿½! ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ò³: {currentPage}"); LoadPage(currentPage); }
+            else { Debug.Log("ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½Ø¿ï¿½Ê¤ï¿½ï¿½ï¿½ï¿½"); HandleLevelComplete(); }
         }
     }
 
@@ -469,11 +493,19 @@ public class GameManager : MonoBehaviour
         onComplete?.Invoke();
     }
 
-    void UpdateScoreDisplay() { scoreText.text = "»ı·Ö: " + currentScore; }
+    /// <summary>æ›´æ–°åˆ†æ•°æ˜¾ç¤º / Update Score Display</summary>
+    void UpdateScoreDisplay() { scoreText.text = "åˆ†æ•° / Score: " + currentScore; }
 
+    /// <summary>é‡æ–°å¼€å§‹å½“å‰å…³å¡ / Restart Current Level</summary>
     public void OnClick_RestartCurrentLevel() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.ReloadCurrentLevel(); } else { SceneManager.LoadScene(SceneManager.GetActiveScene().name); } }
-    public void OnClick_NextLevel() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.LoadNextLevel(); } else { Debug.LogWarning("²âÊÔÄ£Ê½ÏÂÎŞ·¨½øÈëÏÂÒ»¹Ø¡£"); } }
-    public void OnClick_RestartGame() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.RestartGame(); } else { Debug.LogWarning("²âÊÔÄ£Ê½ÏÂÎŞ·¨´ÓµÚÒ»¹ØÖØĞÂ¿ªÊ¼¡£"); } }
+    
+    /// <summary>è¿›å…¥ä¸‹ä¸€å…³ / Next Level</summary>
+    public void OnClick_NextLevel() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.LoadNextLevel(); } else { Debug.LogWarning("æµ‹è¯•æ¨¡å¼ï¼Œæ— æ³•åŠ è½½ä¸‹ä¸€å…³ã€‚/ Test mode, cannot load next level."); } }
+    
+    /// <summary>ä»ç¬¬ä¸€å…³é‡æ–°å¼€å§‹ / Restart from First Level</summary>
+    public void OnClick_RestartGame() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.RestartGame(); } else { Debug.LogWarning("æµ‹è¯•æ¨¡å¼ï¼Œæ— æ³•ä»ç¬¬ä¸€å…³é‡æ–°å¼€å§‹ã€‚/ Test mode, cannot restart from first level."); } }
+    
+    /// <summary>è¿”å›ä¸»èœå• / Return to Main Menu</summary>
     public void OnClick_MainMenu() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.LoadMainMenu(); } else { SceneManager.LoadScene("MainMenu"); } }
 
     #endregion

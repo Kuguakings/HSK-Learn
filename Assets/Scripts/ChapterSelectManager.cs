@@ -1,21 +1,24 @@
-// ChapterSelectManager.cs (¡¾¡¾¡¾ÒÑÖØ¹¹Îª TcbManager¡¿¡¿¡¿)
+/// <summary>
+/// ç« èŠ‚é€‰æ‹©ç®¡ç†å™¨ / Chapter Select Manager
+/// æ ¹æ®æ¸¸æˆæ¨¡å¼æ˜¾ç¤ºå¯ç”¨ç« èŠ‚ï¼Œæ•°æ®æ¥è‡ª TcbManager / Display available chapters based on game mode, data from TcbManager
+/// </summary>
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq; // ¡¾ĞÂ¡¿Îª .Distinct() ºÍ .Where() µ¼Èë
+using System.Linq; // ç”¨äº .Distinct() å’Œ .Where() æ–¹æ³• / For .Distinct() and .Where() methods
 
 public class ChapterSelectManager : MonoBehaviour
 {
-    [Header("UI×é¼şÒıÓÃ")]
-    public TextMeshProUGUI titleText;
-    public GameObject chapterButtonPrefab;
-    public Transform buttonContainer;
-    public LevelSelectManager levelSelectManager;
+    [Header("UIç»„ä»¶å¼•ç”¨ / UI Component References")]
+    public TextMeshProUGUI titleText;           // æ ‡é¢˜æ–‡æœ¬ / Title text
+    public GameObject chapterButtonPrefab;      // ç« èŠ‚æŒ‰é’®é¢„åˆ¶ä½“ / Chapter button prefab
+    public Transform buttonContainer;           // æŒ‰é’®å®¹å™¨ / Button container
+    public LevelSelectManager levelSelectManager; // å…³å¡é€‰æ‹©ç®¡ç†å™¨å¼•ç”¨ / Level select manager reference
 
-    private GameMode currentMode;
-    private CanvasGroup canvasGroup;
+    private GameMode currentMode;   // å½“å‰æ¸¸æˆæ¨¡å¼ / Current game mode
+    private CanvasGroup canvasGroup; // ç”»å¸ƒç»„ç»„ä»¶ / Canvas group component
 
     void Awake()
     {
@@ -30,45 +33,45 @@ public class ChapterSelectManager : MonoBehaviour
 
         if (mode == GameMode.WordMatch3)
         {
-            titleText.text = "µ¥´ÊÏûÏûÀÖ - Ñ¡ÔñÕÂ½Ú";
+            titleText.text = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - Ñ¡ï¿½ï¿½ï¿½Â½ï¿½";
         }
         else if (mode == GameMode.WordLinkUp)
         {
-            titleText.text = "´ÊÓïÁ¬Á¬¿´ - Ñ¡ÔñÕÂ½Ú";
+            titleText.text = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - Ñ¡ï¿½ï¿½ï¿½Â½ï¿½";
         }
 
         StartCoroutine(FadeCanvasGroup(0f, 1f, 0.3f));
 
-        // ¡¾¡¾¡¾ÖØ´óĞŞ¸Ä¡¿£º´Ó TcbManager ¼ÓÔØÕÂ½Ú¡¿¡¿¡¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½Ş¸Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ TcbManager ï¿½ï¿½ï¿½ï¿½ï¿½Â½Ú¡ï¿½ï¿½ï¿½ï¿½ï¿½
         PopulateChapterButtons();
     }
 
     void PopulateChapterButtons()
     {
-        // ÇåÀí¾É°´Å¥
+        // ï¿½ï¿½ï¿½ï¿½ï¿½É°ï¿½Å¥
         foreach (Transform child in buttonContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // ¡¾¡¾¡¾ ÖØ¹¹ ¡¿¡¿¡¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (TcbManager.AllLevels == null || TcbManager.AllLevels.levels == null)
         {
-            Debug.LogError("TcbManager.AllLevels Îª¿Õ£¡ÎŞ·¨¼ÓÔØÕÂ½Ú£¡");
+            Debug.LogError("TcbManager.AllLevels Îªï¿½Õ£ï¿½ï¿½Ş·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â½Ú£ï¿½");
             return;
         }
 
-        // ĞŞ¸Äºó (Ôö¼ÓÁË Where !string.IsNullOrEmpty)
+        // ï¿½Ş¸Äºï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Where !string.IsNullOrEmpty)
         List<string> chapterNames = TcbManager.AllLevels.levels
             .Where(level => level.mode == (int)currentMode)
             .Select(level => level.chapter)
-            .Where(name => !string.IsNullOrEmpty(name)) // <--- ¡¾ĞÂÔö¡¿¹ıÂËµô¿ÕÃû×Ö£¬ÏûÃğÓÄÁé°´Å¥£¡
+            .Where(name => !string.IsNullOrEmpty(name)) // <--- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é°´Å¥ï¿½ï¿½
             .Distinct()
             .OrderBy(name => name)
             .ToList();
-        // ¡¾¡¾¡¾ ÖØ¹¹½áÊø ¡¿¡¿¡¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        // ±éÀúÕÂ½ÚÁĞ±í£¬´´½¨°´Å¥
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½ï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥
         foreach (var chapterName in chapterNames)
         {
             GameObject buttonGO = Instantiate(chapterButtonPrefab, buttonContainer);
@@ -80,22 +83,22 @@ public class ChapterSelectManager : MonoBehaviour
             }
 
             Button button = buttonGO.GetComponent<Button>();
-            string capturedChapterName = chapterName; // ²¶»ñ±äÁ¿
+            string capturedChapterName = chapterName; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             button.onClick.AddListener(() => {
                 OnChapterButtonClick(capturedChapterName);
             });
         }
     }
 
-    // (´Ëº¯ÊıÔ­·â²»¶¯)
+    // (ï¿½Ëºï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
     void OnChapterButtonClick(string chapterName)
     {
-        Debug.Log("Ñ¡ÔñÁËÄ£Ê½ " + currentMode + " µÄÕÂ½Ú: " + chapterName);
+        Debug.Log("Ñ¡ï¿½ï¿½ï¿½ï¿½Ä£Ê½ " + currentMode + " ï¿½ï¿½ï¿½Â½ï¿½: " + chapterName);
         LevelManager.selectedChapterName = chapterName;
         StartCoroutine(FadeOutAndShowLevelSelect());
     }
 
-    // (´Ëº¯ÊıÔ­·â²»¶¯)
+    // (ï¿½Ëºï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
     private IEnumerator FadeOutAndShowLevelSelect()
     {
         yield return StartCoroutine(FadeCanvasGroup(1f, 0f, 0.3f));
@@ -106,11 +109,11 @@ public class ChapterSelectManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("LevelSelectManager ÒıÓÃÎ´ÉèÖÃ£¡");
+            Debug.LogError("LevelSelectManager ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½Ã£ï¿½");
         }
     }
 
-    // (´Ëº¯ÊıÔ­·â²»¶¯)
+    // (ï¿½Ëºï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
     private IEnumerator FadeCanvasGroup(float startAlpha, float endAlpha, float duration)
     {
         canvasGroup.interactable = false;

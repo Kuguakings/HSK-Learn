@@ -5,95 +5,116 @@ using UnityEngine.EventSystems;
 using System.Runtime.InteropServices;
 
 /// <summary>
-/// ¹ÒÔØÔÚÖ÷²Ëµ¥ÓÒÉÏ½ÇµÄ¡°ÓÃ»§ĞÅÏ¢Ãæ°å¡±ÉÏ
+/// ç®¡ç†ä¸»èœå•å³ä¸Šè§’çš„"ç”¨æˆ·ä¿¡æ¯é¢æ¿"ã€‚
 /// </summary>
 public class UserProfileManager : MonoBehaviour, IPointerClickHandler
 {
-    [Header("UI ÒıÓÃ")]
-    public TextMeshProUGUI usernameText; // ÍÏ×§ÏÔÊ¾êÇ³ÆµÄ Text
-    public TextMeshProUGUI roleText;     // ÍÏ×§ÏÔÊ¾Éí·İ(¹ÜÀíÔ±/Ñ§Ô±)µÄ Text
+    [Header("UI ç»„ä»¶")]
+    public TextMeshProUGUI usernameText; // ç”¨äºæ˜¾ç¤ºæ˜µç§°çš„ Text
+    public TextMeshProUGUI roleText;     // ç”¨äºæ˜¾ç¤ºè§’è‰²(ç®¡ç†å‘˜/å­¦å‘˜)çš„ Text
 
-    [Header("ÑÕÉ«ÅäÖÃ")]
-    public Color superAdminColor = new Color(1f, 0.84f, 0f); // ½ğÉ«
-    public Color adminColor = new Color(0f, 0.8f, 1f);       // À¶É«
-    public Color userColor = new Color(0.8f, 0.8f, 0.8f);    // »ÒÉ«
+    [Header("è§’è‰²é¢œè‰²")]
+    public Color superAdminColor = new Color(1f, 0.84f, 0f); // é‡‘è‰²
+    public Color adminColor = new Color(0f, 0.8f, 1f);       // è“è‰²
+    public Color userColor = new Color(0.8f, 0.8f, 0.8f);    // ç°è‰²
 
-    // ¡¾ºËĞÄĞŞ¸´£ºÒıÈë Native Prompt (Ô­Éúµ¯´°)¡¿
+    // è°ƒç”¨ Native Prompt (åŸæ¥ä»£ç )
+    [DllImport("__Internal")]
+    private static extern void JsShowNativePrompt(string existingText, string objectName, string callbackSuccess);
+
+    // WebGLä¸“ç”¨ï¼šè°ƒç”¨JavaScriptçš„åŸç”Ÿè¾“å…¥æ¡† / WebGL only: Call JavaScript native input
+    [DllImport("__Internal")]
+    private static extern void JsShowNativePrompt(string existingText, string objectName, string callbackSuccess);
+
+    // WebGLä¸“ç”¨ï¼šè°ƒç”¨JavaScriptçš„åŸç”Ÿè¾“å…¥æ¡† / WebGL only: Call JavaScript native input
     [DllImport("__Internal")]
     private static extern void JsShowNativePrompt(string existingText, string objectName, string callbackSuccess);
 
     void Start()
     {
-        // ³õÊ¼¸üĞÂÒ»´Î UI
+        // åˆå§‹åŒ–æ›´æ–°ä¸€æ¬¡ UI
         UpdateUI();
     }
 
     public void UpdateUI()
     {
-        // 1. ¸üĞÂÓÃ»§Ãû
+        // 1. æ›´æ–°ç”¨æˆ·å
         if (!string.IsNullOrEmpty(TcbManager.CurrentNickname))
         {
             usernameText.text = TcbManager.CurrentNickname;
         }
         else
         {
-            usernameText.text = "¼ÓÔØÖĞ...";
+            usernameText.text = "åŠ è½½ä¸­...";
         }
 
-        // 2. ¸üĞÂ½ÇÉ«/È¨ÏŞÏÔÊ¾
+        // 2. æ›´æ–°è§’è‰²/æƒé™æ˜¾ç¤º
         if (TcbManager.IsAdmin)
         {
             if (TcbManager.AdminLevel >= 999)
             {
-                roleText.text = "³¬¼¶¹ÜÀíÔ±";
+                roleText.text = "è¶…çº§ç®¡ç†å‘˜";
                 roleText.color = superAdminColor;
                 usernameText.color = superAdminColor;
             }
             else
             {
-                roleText.text = "¹ÜÀíÔ±";
+                roleText.text = "ç®¡ç†å‘˜";
                 roleText.color = adminColor;
                 usernameText.color = adminColor;
             }
         }
         else
         {
-            roleText.text = "Ñ§Ô±";
+            roleText.text = "å­¦å‘˜";
             roleText.color = userColor;
-            usernameText.color = Color.white; // ÆÕÍ¨ÓÃ»§Ãû×Ö°×É«
+            usernameText.color = Color.white; // æ™®é€šç”¨æˆ·åä¸ºç™½è‰²
         }
     }
 
-    // ´¦Àíµã»÷ÊÂ¼ş
+    // å¤„ç†ç‚¹å‡»äº‹ä»¶
     public void OnPointerClick(PointerEventData eventData)
     {
-        // Ö»ÓĞÓÒ¼üµã»÷²Å´¥·¢¸ÄÃû
+        // åªæœ‰å³é”®æ‰è§¦å‘æ”¹å
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            Debug.Log("ÓÒ¼üµã»÷ÓÃ»§Í·Ïñ£¬´ò¿ª¸ÄÃû¿ò...");
+            Debug.Log("å³é”®ç‚¹å‡»ç”¨æˆ·å¤´åƒï¼Œæ‰“å¼€æ”¹åçª—å£...");
             string currentName = TcbManager.CurrentNickname;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-            // ¡¾ĞŞ¸´¡¿µ÷ÓÃÔ­Éúä¯ÀÀÆ÷ÊäÈë¿ò
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+            // è°ƒç”¨åŸæ¥ä»£ç æ–¹å¼
             JsShowNativePrompt(currentName, gameObject.name, "OnReceiveNewName");
 #else
-            Debug.LogWarning("±à¼­Æ÷²»Ö§³Ö WebGL ÊäÈë¿ò£¬Çë´ò°ü²âÊÔ");
+            Debug.LogWarning("ç¼–è¾‘å™¨ä¸æ”¯æŒ WebGL åŸç”Ÿè¾“å…¥æ¡†åŠŸèƒ½");
+=======
+=======
+>>>>>>> Stashed changes
+            // WebGLæ„å»ºï¼šè°ƒç”¨JavaScriptåŸç”Ÿè¾“å…¥æ¡† / WebGL build: Call JavaScript native input
+            JsShowNativePrompt(currentName, gameObject.name, "OnReceiveNewName");
+#else
+            Debug.LogWarning("ç¼–è¾‘å™¨ä¸æ”¯æŒ WebGL åŸç”Ÿè¾“å…¥æ¡†åŠŸèƒ½ / Editor doesn't support WebGL native input");
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 #endif
         }
     }
 
-    // ½ÓÊÕ JS ·µ»ØµÄĞÂÃû×Ö
+    // æ¥æ”¶ JS å›è°ƒçš„å‡½æ•°
     public void OnReceiveNewName(string newName)
     {
         if (string.IsNullOrWhiteSpace(newName)) return;
 
-        // ¼òµ¥ÏŞÖÆ³¤¶È£¬·ÀÖ¹ UI ±¬µô
+        // é™åˆ¶é•¿åº¦ï¼Œé˜²æ­¢ UI æº¢å‡º
         if (newName.Length > 12) newName = newName.Substring(0, 12);
 
-        // ±¾µØÏÈ¸üĞÂ£¬ÈÃÓÃ»§¸Ğ¾õºÜ¿ì
+        // å…ˆæ›´æ–°UIï¼Œè®©ç”¨æˆ·ç«‹å³çœ‹åˆ°åé¦ˆ
         usernameText.text = newName;
 
-        // ·¢ËÍ¸øºó¶Ë±£´æ
+        // åŒæ­¥åˆ°åç«¯æ•°æ®åº“
         if (TcbManager.instance != null)
         {
             TcbManager.instance.RequestUpdateUsername(newName);

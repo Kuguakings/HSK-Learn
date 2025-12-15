@@ -1,3 +1,8 @@
+/// <summary>
+/// å…³å¡ç®¡ç†å™¨ / Level Manager
+/// ç®¡ç†åœºæ™¯åˆ‡æ¢ã€å…³å¡è¿›åº¦ã€æ·¡å…¥æ·¡å‡ºæ•ˆæœ / Manages scene transitions, level progress, and fade effects
+/// ä½¿ç”¨å•ä¾‹æ¨¡å¼ï¼Œåœºæ™¯åˆ‡æ¢æ—¶ä¸é”€æ¯ / Uses singleton pattern, persists across scene changes
+/// </summary>
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,43 +10,52 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
 
+/// <summary>æ¸¸æˆæ¨¡å¼æšä¸¾ / Game Mode Enumeration</summary>
 public enum GameMode { WordMatch3, WordLinkUp }
 
 public class LevelManager : MonoBehaviour
 {
-    public static LevelManager instance;
+    public static LevelManager instance;  // å•ä¾‹å®ä¾‹ / Singleton instance
 
-    [Header("³¡¾°Ãû³ÆÅäÖÃ")]
-    public string wordMatch3SceneName = "Match3_Scene";
-    public string wordLinkUpSceneName = "LinkUp_Scene";
-    public string levelEditorSceneName = "LevelEditorScene";
-    public string mainMenuSceneName = "MainMenu";
+    [Header("åœºæ™¯åç§°é…ç½® / Scene Name Configuration")]
+    public string wordMatch3SceneName = "Match3_Scene";         // æ¶ˆæ¶ˆä¹åœºæ™¯ / Match-3 scene
+    public string wordLinkUpSceneName = "LinkUp_Scene";         // è¿è¿çœ‹åœºæ™¯ / Link-up scene
+    public string levelEditorSceneName = "LevelEditorScene";    // å…³å¡ç¼–è¾‘å™¨åœºæ™¯ / Level editor scene
+    public string mainMenuSceneName = "MainMenu";               // ä¸»èœå•åœºæ™¯ / Main menu scene
 
-    [Header("¹ı¶É¶¯»­")]
-    public Image fadeImage;
-    public float fadeDuration = 0.7f;
+    [Header("æ·¡å…¥æ·¡å‡ºé…ç½® / Fade Configuration")]
+    public Image fadeImage;           // é»‘è‰²é®ç½©å›¾ç‰‡ / Black fade image
+    public float fadeDuration = 0.7f; // æ·¡å…¥æ·¡å‡ºæ—¶é•¿ / Fade duration
 
-    public static GameMode selectedGameMode;
-    public static string selectedChapterName;
-    public static LevelData selectedLevelData;
+    // é™æ€å˜é‡ï¼šå­˜å‚¨å…³å¡é€‰æ‹©ä¿¡æ¯ / Static variables: Store level selection info
+    // æ³¨æ„ï¼šä½¿ç”¨é™æ€å˜é‡æ–¹ä¾¿è·¨åœºæ™¯ä¼ é€’æ•°æ®ï¼Œä½†éœ€è¦å°å¿ƒç®¡ç†çŠ¶æ€
+    // Note: Static variables make cross-scene data passing easy, but state management requires care
+    public static GameMode selectedGameMode;       // é€‰ä¸­çš„æ¸¸æˆæ¨¡å¼ / Selected game mode
+    public static string selectedChapterName;      // é€‰ä¸­çš„ç« èŠ‚å / Selected chapter name
+    public static LevelData selectedLevelData;     // é€‰ä¸­çš„å…³å¡æ•°æ® / Selected level data
 
-    #region ÊÔÍæÄ£Ê½±ê¼Ç
-    [Tooltip("¸æËßÓÎÏ·³¡¾°£¬ÎÒÃÇÊÇ¡°ÊÔÍæ¡±£¬²»ÊÇ¡°´³¹Ø¡±")]
+    #region æµ‹è¯•æ¨¡å¼æ ‡å¿— / Test Mode Flags
+    // è¿™äº›é™æ€å¸ƒå°”å€¼ç”¨äºåœ¨å…³å¡ç¼–è¾‘å™¨å’Œæµ‹è¯•ä¹‹é—´ä¼ é€’çŠ¶æ€
+    // These static booleans pass state between level editor and testing
+    
+    [Tooltip("å½“å‰æ¸¸æˆæ˜¯å¦å¤„äºã€æµ‹è¯•ã€‘æ¨¡å¼ï¼ˆä¸æ˜¯ã€æ­£å¸¸ã€‘ï¼‰/ Is currently in test mode (not normal mode)")]
     public static bool isTestPlayMode = false;
-    [Tooltip("¸æËß±à¼­Æ÷£¬ÎÒÃÇ¡°ÊÔÍæ³É¹¦¡±ÁË (ÓÃÓÚÏÔÊ¾·¢²¼°´Å¥)")]
+    
+    [Tooltip("å…³å¡ç¼–è¾‘å™¨æ˜¯å¦ã€åˆšå®Œæˆæµ‹è¯•ã€‘(ç”¨äºæ˜¾ç¤ºè¿”å›æŒ‰é’®) / Did just complete test play (for showing return button)")]
     public static bool justCompletedTestPlay = false;
-    [Tooltip("¸æËß±à¼­Æ÷£¬ÎÒÃÇ¡°¸Õ´ÓÊÔÍæ·µ»Ø¡± (ÓÃÓÚ×Ô¶¯µ¼º½)")]
+    
+    [Tooltip("å…³å¡ç¼–è¾‘å™¨æ˜¯å¦ã€åˆšä»æµ‹è¯•è¿”å›ã€‘(ç”¨äºè‡ªåŠ¨ä¿å­˜) / Did just return from test (for auto-save)")]
     public static bool justReturnedFromTest = false;
 
-    [Tooltip("¸æËßÓÎÏ·³¡¾°£¬ÎÒÃÇÊÇ¡°¹ÜÀíÔ±¡±")]
+    [Tooltip("å½“å‰æ¸¸æˆæ˜¯å¦å¤„äºã€ç®¡ç†å‘˜ã€‘æ¨¡å¼ / Is currently in admin mode")]
     public static bool IsAdmin = false;
 
     #endregion
 
-    #region µ¥Àı ºÍ ³¡¾°¼ÓÔØ
+    #region ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void Awake()
     {
-        // ¡¾ºËĞÄĞŞ¸´¡¿Ç¿ÖÆ½âËøÊ±¼ä£¬·ÀÖ¹´ÓÔİÍ£×´Ì¬·µ»Øµ¼ÖÂºÚÆÁ¿¨ËÀ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½ï¿½ï¿½Ç¿ï¿½Æ½ï¿½ï¿½ï¿½Ê±ï¿½ä£¬ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½Í£×´Ì¬ï¿½ï¿½ï¿½Øµï¿½ï¿½Âºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Time.timeScale = 1f;
 
         if (instance == null)
@@ -49,7 +63,7 @@ public class LevelManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // ¡¾WEBGL ¼æÈİ£ººöÂÔ·Ö±æÂÊÉèÖÃ¡¿
+            // ï¿½ï¿½WEBGL ï¿½ï¿½ï¿½İ£ï¿½ï¿½ï¿½ï¿½Ô·Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¡ï¿½
 #if !UNITY_WEBGL
             if (PlayerPrefs.HasKey("ResolutionIndex"))
             {
@@ -75,10 +89,10 @@ public class LevelManager : MonoBehaviour
             }
 #endif
 
-            // ³õÊ¼»¯ÕÚÕÖ£º¸ÕÆô¶¯Ê±ÉèÎªÍ¸Ã÷£¬ÇÒ²»µ²ÉäÏß
+            // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ÎªÍ¸ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (fadeImage != null)
             {
-                fadeImage.gameObject.SetActive(false); // Ä¬ÈÏÒş²Ø
+                fadeImage.gameObject.SetActive(false); // Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 fadeImage.color = new Color(0, 0, 0, 0);
                 fadeImage.raycastTarget = false;
             }
@@ -91,7 +105,7 @@ public class LevelManager : MonoBehaviour
 
     public void ManuallyTriggerFadeOut()
     {
-        Debug.Log("[LevelManager] ÕıÔÚ±»ÊÖ¶¯´¥·¢ FadeOut()...");
+        Debug.Log("[LevelManager] ï¿½ï¿½ï¿½Ú±ï¿½ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½ FadeOut()...");
         if (fadeImage != null)
         {
             fadeImage.color = new Color(0, 0, 0, 1);
@@ -105,10 +119,10 @@ public class LevelManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // ¡¾ºËĞÄĞŞ¸´¡¿ÔÙ´ÎÇ¿ÖÆ½âËøÊ±¼ä
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½ï¿½ï¿½ï¿½Ù´ï¿½Ç¿ï¿½Æ½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
         Time.timeScale = 1f;
 
-        // Ã¿´Î³¡¾°¼ÓÔØÍê±Ï£¬Ö´ĞĞµ­³ö¶¯»­
+        // Ã¿ï¿½Î³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï£ï¿½Ö´ï¿½Ğµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         StartCoroutine(FadeOut());
     }
     #endregion
@@ -128,7 +142,7 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    #region ¹Ø¿¨Á÷³Ì¿ØÖÆ
+    #region ï¿½Ø¿ï¿½ï¿½ï¿½ï¿½Ì¿ï¿½ï¿½ï¿½
 
     public void LoadMainMenu()
     {
@@ -156,12 +170,12 @@ public class LevelManager : MonoBehaviour
     public void ReloadCurrentLevel()
     {
         if (selectedLevelData != null) { LoadLevel(selectedLevelData); }
-        else { Debug.LogError("Ã»ÓĞ¿ÉÖØĞÂ¼ÓÔØµÄ¹Ø¿¨Êı¾İ£¡·µ»ØÖ÷²Ëµ¥¡£"); LoadMainMenu(); }
+        else { Debug.LogError("Ã»ï¿½Ğ¿ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ØµÄ¹Ø¿ï¿½ï¿½ï¿½ï¿½İ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½"); LoadMainMenu(); }
     }
 
     public void LoadNextLevel()
     {
-        if (TcbManager.AllLevels == null) { Debug.LogError("TcbManager Îª¿Õ£¬ÎŞ·¨ÕÒµ½ÏÂÒ»¹Ø£¡"); LoadMainMenu(); return; }
+        if (TcbManager.AllLevels == null) { Debug.LogError("TcbManager Îªï¿½Õ£ï¿½ï¿½Ş·ï¿½ï¿½Òµï¿½ï¿½ï¿½Ò»ï¿½Ø£ï¿½"); LoadMainMenu(); return; }
 
         var levelsInThisChapter = TcbManager.AllLevels.levels
             .Where(l => l.mode == (long)selectedGameMode && l.chapter == selectedChapterName)
@@ -186,7 +200,7 @@ public class LevelManager : MonoBehaviour
     }
     #endregion
 
-    #region ÊÔÍæ×¨ÓÃº¯Êı
+    #region ï¿½ï¿½ï¿½ï¿½×¨ï¿½Ãºï¿½ï¿½ï¿½
     public void ReturnToEditor(bool didWin)
     {
         isTestPlayMode = false;
@@ -219,7 +233,7 @@ public class LevelManager : MonoBehaviour
         StartCoroutine(LoadSceneWithFade(sceneName));
     }
 
-    #region ¹ı¶É¶¯»­ (FadeIn, FadeOut)
+    #region ï¿½ï¿½ï¿½É¶ï¿½ï¿½ï¿½ (FadeIn, FadeOut)
 
     private IEnumerator LoadSceneWithFade(string sceneName)
     {
@@ -232,7 +246,7 @@ public class LevelManager : MonoBehaviour
         if (fadeImage == null) { yield break; }
 
         fadeImage.gameObject.SetActive(true);
-        fadeImage.raycastTarget = true; // ×èµ²µã»÷
+        fadeImage.raycastTarget = true; // ï¿½èµ²ï¿½ï¿½ï¿½
 
         float elapsedTime = 0f;
         while (elapsedTime < fadeDuration)
@@ -242,7 +256,7 @@ public class LevelManager : MonoBehaviour
             fadeImage.color = new Color(0, 0, 0, alpha);
             yield return null;
         }
-        fadeImage.color = new Color(0, 0, 0, 1); // È·±£È«ºÚ
+        fadeImage.color = new Color(0, 0, 0, 1); // È·ï¿½ï¿½È«ï¿½ï¿½
     }
 
     private IEnumerator FadeOut()
@@ -251,9 +265,9 @@ public class LevelManager : MonoBehaviour
 
         fadeImage.gameObject.SetActive(true);
         fadeImage.raycastTarget = true;
-        fadeImage.color = new Color(0, 0, 0, 1); // Ç¿ÖÆ´ÓÈ«ºÚ¿ªÊ¼£¬·ÀÖ¹ÉÁË¸
+        fadeImage.color = new Color(0, 0, 0, 1); // Ç¿ï¿½Æ´ï¿½È«ï¿½Ú¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Ë¸
 
-        // µÈ´ıÒ»Ö¡£¬È·±£³¡¾°ÆäËûÎïÌå³õÊ¼»¯Íê³É
+        // ï¿½È´ï¿½Ò»Ö¡ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½
         yield return null;
 
         float elapsedTime = 0f;
@@ -266,9 +280,9 @@ public class LevelManager : MonoBehaviour
         }
 
         fadeImage.color = new Color(0, 0, 0, 0);
-        fadeImage.raycastTarget = false; // ¡¾¹Ø¼ü¡¿È¡Ïû×èµ²
+        fadeImage.raycastTarget = false; // ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½èµ²
 
-        // ¡¾ºËĞÄĞŞ¸´¡¿È·±£¶¯»­½áÊøºóÒ»¶¨ÒªÒş²Ø£¬·ñÔò¿ÉÄÜ»áÓĞ²ĞÁôºÚÆÁ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¸ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Òªï¿½ï¿½ï¿½Ø£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü»ï¿½ï¿½Ğ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         fadeImage.gameObject.SetActive(false);
     }
     #endregion
