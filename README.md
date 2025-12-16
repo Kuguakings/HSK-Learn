@@ -35,13 +35,17 @@ This project uses a hybrid architecture. The C# code cannot talk to the cloud di
 
 # 🛠️ Setup Guide (Strict Requirements)
 
-### 1. Unity Version (Crucial!)
-My project is built on the China-specific version: **`2022.3.62f1c1`**.
+### 1. Unity Editor Version (Crucial!)
+My project is built on the specific version: **`2022.3.62f1c1`**.
 
-**👉 For You (International User):**
-Please download the standard **`2022.3.62f1`** (without `c1`).
-* *Why?* The `c1` version is not visible on the global Unity Hub.
-* *Note:* When you open the project, if Unity warns about a version mismatch (c1 -> f1), just click **"Continue"**. It works perfectly fine.
+**Please follow this priority to download Unity:**
+
+* **🥇 Priority 1 (Best Match):**
+    Search for **`2022.3.62f1c1`** in your Unity Hub. If you can find it, **download this one**. It matches my environment 100%.
+
+* **🥈 Priority 2 (Fallback):**
+    If you **cannot** find the `c1` version (because you are outside China), please download **`2022.3.62f1`** instead.
+    * *Note:* It is compatible. If Unity warns about a version change when opening, just click **"Continue"**.
 
 ### 2. Cloning (LFS Warning)
 **⛔ Do NOT use "Download ZIP".**
