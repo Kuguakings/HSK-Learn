@@ -6,18 +6,18 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// æ¨¡å¼2ç¼–è¾‘å™¨ - å¥å­è¾“å…¥è¡Œç»„ä»¶
-/// ç»‘å®šåˆ° M2_SentenceInputRow_Prefab ä¸Š
+/// Ä£Ê½2±à¼­Æ÷ - ¾ä×ÓÊäÈëĞĞ×é¼ş
+/// °ó¶¨µ½ M2_SentenceInputRow_Prefab ÉÏ
 /// </summary>
 public class M2_SentenceInputRow : MonoBehaviour
 {
-    [Header("UI å¼•ç”¨")]
-    public TextMeshProUGUI sentenceIdText;  // æ˜¾ç¤ºå¥å­ID
-    public TMP_InputField sentenceInput;     // å¥å­è¾“å…¥æ¡†
-    public Toggle selectionToggle;           // é€‰æ‹©Toggle
-    public Button deleteButton;              // åˆ é™¤æŒ‰é’®ï¼ˆå¦‚æœæœ‰ï¼‰
+    [Header("UI ÒıÓÃ")]
+    public TextMeshProUGUI sentenceIdText;  // ÏÔÊ¾¾ä×ÓID
+    public TMP_InputField sentenceInput;     // ¾ä×ÓÊäÈë¿ò
+    public Toggle selectionToggle;           // Ñ¡ÔñToggle
+    public Button deleteButton;              // É¾³ı°´Å¥£¨Èç¹ûÓĞ£©
 
-    [Header("é€‰æ‹©é«˜äº®")]
+    [Header("Ñ¡Ôñ¸ßÁÁ")]
     public Image selectionHighlight;
 
     private LevelEditorManager editorManager;
@@ -25,43 +25,43 @@ public class M2_SentenceInputRow : MonoBehaviour
     private bool isManagerUpdatingToggle = false;
 
     /// <summary>
-    /// åˆå§‹åŒ–è®¾ç½®
+    /// ³õÊ¼»¯ÉèÖÃ
     /// </summary>
     public void Setup(LevelEditorManager manager, int id, Mode2Content data)
     {
         this.editorManager = manager;
         this.sentenceId = id;
 
-        // 1. è®¾ç½®IDæ˜¾ç¤º
+        // 1. ÉèÖÃIDÏÔÊ¾
         if (sentenceIdText != null)
         {
             sentenceIdText.text = id.ToString();
         }
 
-        // 2. è®¾ç½®å¥å­å†…å®¹
+        // 2. ÉèÖÃ¾ä×ÓÄÚÈİ
         if (sentenceInput != null)
         {
-            // å¦‚æœæœ‰æ•°æ®ï¼Œä½¿ç”¨ç¬¬ä¸€ä¸ªå•è¯ä½œä¸ºå®Œæ•´å¥å­çš„ä»£è¡¨
-            // å®é™…ä¸Šåº”è¯¥ä»æ‰€æœ‰ç›¸åŒsentenceIdçš„wordsæ‹¼æ¥è€Œæ¥
+            // Èç¹ûÓĞÊı¾İ£¬Ê¹ÓÃµÚÒ»¸öµ¥´Ê×÷ÎªÍêÕû¾ä×ÓµÄ´ú±í
+            // Êµ¼ÊÉÏÓ¦¸Ã´ÓËùÓĞÏàÍ¬sentenceIdµÄwordsÆ´½Ó¶øÀ´
             sentenceInput.text = data != null ? data.fullSentence : "";
-            
-            // ç»‘å®šè¾“å…¥å˜åŒ–äº‹ä»¶
+
+            // °ó¶¨ÊäÈë±ä»¯ÊÂ¼ş
             sentenceInput.onValueChanged.AddListener(OnSentenceChanged);
         }
 
-        // 3. ç»‘å®šToggleäº‹ä»¶
+        // 3. °ó¶¨ToggleÊÂ¼ş
         if (selectionToggle != null)
         {
             selectionToggle.onValueChanged.AddListener(OnToggleChanged);
         }
 
-        // 4. ç»‘å®šåˆ é™¤æŒ‰é’®ï¼ˆå¦‚æœæœ‰ï¼‰
+        // 4. °ó¶¨É¾³ı°´Å¥£¨Èç¹ûÓĞ£©
         if (deleteButton != null)
         {
             deleteButton.onClick.AddListener(OnDeleteClicked);
         }
 
-        // 5. é»˜è®¤ä¸é€‰ä¸­
+        // 5. Ä¬ÈÏ²»Ñ¡ÖĞ
         SetSelected(false);
     }
 
@@ -85,7 +85,7 @@ public class M2_SentenceInputRow : MonoBehaviour
 
     private void OnDeleteClicked()
     {
-        // TODO: å®ç°åˆ é™¤é€»è¾‘
+        // TODO: ÊµÏÖÉ¾³ıÂß¼­
         if (editorManager != null)
         {
             // editorManager.M2_OnRequestDeleteSentence(this);
@@ -93,7 +93,7 @@ public class M2_SentenceInputRow : MonoBehaviour
     }
 
     /// <summary>
-    /// è·å–å¥å­ID
+    /// »ñÈ¡¾ä×ÓID
     /// </summary>
     public int GetSentenceId()
     {
@@ -101,7 +101,7 @@ public class M2_SentenceInputRow : MonoBehaviour
     }
 
     /// <summary>
-    /// è·å–å®Œæ•´å¥å­å†…å®¹
+    /// »ñÈ¡ÍêÕû¾ä×ÓÄÚÈİ
     /// </summary>
     public string GetFullSentence()
     {
@@ -109,12 +109,12 @@ public class M2_SentenceInputRow : MonoBehaviour
     }
 
     /// <summary>
-    /// è®¾ç½®é€‰ä¸­çŠ¶æ€ï¼ˆç”±Managerè°ƒç”¨ï¼‰
+    /// ÉèÖÃÑ¡ÖĞ×´Ì¬£¨ÓÉManagerµ÷ÓÃ£©
     /// </summary>
     public void SetSelected(bool selected)
     {
         isManagerUpdatingToggle = true;
-        
+
         if (selectionToggle != null)
         {
             selectionToggle.isOn = selected;
@@ -129,7 +129,7 @@ public class M2_SentenceInputRow : MonoBehaviour
     }
 
     /// <summary>
-    /// è®¾ç½®å®Œæ•´å¥å­æ–‡æœ¬
+    /// ÉèÖÃÍêÕû¾ä×ÓÎÄ±¾
     /// </summary>
     public void SetFullSentenceText(string text)
     {
@@ -140,12 +140,12 @@ public class M2_SentenceInputRow : MonoBehaviour
     }
 
     /// <summary>
-    /// æ›´æ–°æ˜¾ç¤ºï¼ˆå¦‚æœéœ€è¦ï¼‰
+    /// ¸üĞÂÏÔÊ¾£¨Èç¹ûĞèÒª£©
     /// </summary>
     public void UpdateDisplay(int newId, string newSentence)
     {
         sentenceId = newId;
-        
+
         if (sentenceIdText != null)
         {
             sentenceIdText.text = newId.ToString();
@@ -159,7 +159,7 @@ public class M2_SentenceInputRow : MonoBehaviour
 
     private void OnDestroy()
     {
-        // æ¸…ç†äº‹ä»¶ç›‘å¬
+        // ÇåÀíÊÂ¼ş¼àÌı
         if (sentenceInput != null)
         {
             sentenceInput.onValueChanged.RemoveListener(OnSentenceChanged);
