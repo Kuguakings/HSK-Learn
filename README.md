@@ -14,8 +14,6 @@ Click the button below to play the latest web version:
 
 # 📂 Project Architecture (Read this before Coding)
 
-Since you are focusing on the code, here is a quick map of where everything lives.
-
 ### 1. Core Folders
 * **`Assets/Scripts/`**: This is where most of the C# game logic resides.
 * **`Assets/Scenes/`**: Contains the game levels. Please load the Main scene to start.
