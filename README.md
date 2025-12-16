@@ -12,52 +12,48 @@ Click the button below to play the latest web version:
 
 ---
 
-# 📂 Project Architecture (Read this before Coding)
+# 📂 Project Architecture (For Developers)
 
-### 1. Core Folders
-* **`Assets/Scripts/`**: This is where most of the C# game logic resides.
-* **`Assets/Scenes/`**: Contains the game levels. Please load the Main scene to start.
-* **`Assets/Resources/`**: Contains game data for different HSK levels (`HSK1` - `HSK4`).
-* **`Assets/Sprites/`**: Contains 2D UI images and assets.
+Since you are handling the code, please pay attention to the **Cloud Bridge**.
 
-### 2. ☁️ Tencent Cloud Integration (Important!)
-We use **Tencent Cloud Base (TCB)** for our backend data. The communication between Unity (C#) and the Cloud (JavaScript) happens in these specific folders:
+### 1. ☁️ Tencent Cloud Bridge (The Core)
+This project uses a hybrid architecture. The C# code cannot talk to the cloud directly; it must go through a bridge.
 
-**A. The Bridge (Interface)**
-* **Location:** `Assets/Plugins/WebGL/TcbWebGL`
-* **Function:** This is the critical **interface file** (usually a `.jslib`). It acts as a bridge, allowing Unity's C# code to call JavaScript functions to send/receive data from Tencent Cloud.
-* *If you need to add new API calls, check this file.*
+* **The Bridge File:** `Assets/Plugins/WebGL/TcbWebGL`
+    * **What is it?** This is the **ONLY** place where C# can communicate with the Tencent Cloud SDK (JavaScript).
+    * **How to dev:** If you need to add a new cloud function (e.g., "Upload Score"), you must define the JS function here first, then call it from C#.
 
-**B. The Web Template**
-* **Location:** `Assets/WebGLTemplates/TcbTemplate`
-* **Function:** This is the custom HTML template for the game.
-    * `cloudbase...js`: Handles the initialization of the Tencent Cloud SDK.
-    * `index.html`: The entry point of the web page.
+* **The Web Template:** `Assets/WebGLTemplates/TcbTemplate`
+    * Contains `cloudbase` SDK initialization and `index.html`.
+
+### 2. Standard Folders
+* **`Assets/Scripts/`**: Game Logic (C#).
+* **`Assets/Resources/`**: Data files for HSK Levels.
+* **`Assets/Scenes/`**: Game Levels.
 
 ---
 
-# 🛠️ Developer Setup Guide
+# 🛠️ Setup Guide (Strict Requirements)
 
-### 1. Unity Version Requirement
-**⚠️ Important:** Please make sure you are using **Unity [2022.3.10f1]** (or the exact version match).
-* *Version mismatches will likely break the scene files.*
+### 1. Unity Version (Crucial!)
+My project is built on the China-specific version: **`2022.3.62f1c1`**.
+
+**👉 For You (International User):**
+Please download the standard **`2022.3.62f1`** (without `c1`).
+* *Why?* The `c1` version is not visible on the global Unity Hub.
+* *Note:* When you open the project, if Unity warns about a version mismatch (c1 -> f1), just click **"Continue"**. It works perfectly fine.
 
 ### 2. Cloning (LFS Warning)
 **⛔ Do NOT use "Download ZIP".**
-* This repository relies heavily on **Git LFS** for textures and models.
-* Please use `git clone` (via Terminal or GitHub Desktop).
-* *Check:* After cloning, if your total folder size is small (MBs instead of GBs), `git lfs pull` might be needed.
+* This repository uses **Git LFS** for textures.
+* Please use `git clone`.
+* *Check:* If your project folder is small (MBs), run `git lfs pull`.
 
-### 3. How to Load the Level
-When you first open the project in Unity, the viewport will look **empty/blue**. This is normal.
-
+### 3. How to Start
+The default view will be empty.
 **👉 You must manually load the scene:**
-1.  Go to the **Project Panel** at the bottom.
-2.  Navigate to: `Assets` -> `Scenes`.
-3.  Double-click the main scene file.
-
-### 4. Workflow Notes
-* **Syncing:** Please pull the latest changes before starting your work to avoid binary merge conflicts.
+1.  Go to `Assets` -> `Scenes`.
+2.  Double-click the main scene file.
 
 Let's make a great game! 🚀
 
