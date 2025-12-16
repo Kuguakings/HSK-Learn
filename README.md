@@ -1,11 +1,11 @@
-# HSK—Learn
+# Element-Crush Project
 
 ## 🎮 Play Online / 在线试玩
 
 Click the button below to play the latest web version:
 (点击下方按钮直接开始游戏)
 
-[![Play Now](https://img.shields.io/badge/Play-On_Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://hsklearningv1-3-1.netlify.app/)
+[![Play Now](https://img.shields.io/badge/Play-On_Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://hsk-learning.netlify.app/)
 
 > Server: Netlify | Database: Tencent Cloud (TCB)
 > (游戏服务器：Netlify | 数据库：腾讯云)
@@ -13,6 +13,8 @@ Click the button below to play the latest web version:
 ---
 
 # 📂 Project Architecture (For Developers)
+
+Since you are handling the code, please pay attention to the **Cloud Bridge**.
 
 ### 1. ☁️ Tencent Cloud Bridge (The Core)
 This project uses a hybrid architecture. The C# code cannot talk to the cloud directly; it must go through a bridge.
