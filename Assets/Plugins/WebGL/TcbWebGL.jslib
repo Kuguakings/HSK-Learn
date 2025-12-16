@@ -1,3 +1,21 @@
+// Ensure helper exists before merge
+if (
+  typeof window !== "undefined" &&
+  typeof window.CleanExpiredGuests !== "function"
+) {
+  // Lightweight no-op cleanup to avoid breaking guest creation flow
+  // In case you later want real cleanup, replace with DB query/removal logic.
+  window.CleanExpiredGuests = function () {
+    try {
+      // Optional: place holder log; keep silent in production if preferred
+      if (typeof console !== "undefined") {
+        console.log("[TcbWebGL] CleanExpiredGuests noop");
+      }
+    } catch (e) {}
+    return Promise.resolve();
+  };
+}
+
 mergeInto(LibraryManager.library, {
   // --------------------------------------------------------------
   // 1. 基础认证 (Auth) - 【已修复：使用 window.tcbAuth】

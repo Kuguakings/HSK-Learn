@@ -1,105 +1,120 @@
 <!DOCTYPE html>
 <html lang="en-us">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>HSK Learning Game</title>
 
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
 
-
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
 
     <style>
-        body {
-            padding: 0;
-            margin: 0;
-            background: #000;
-        }
+      body {
+        padding: 0;
+        margin: 0;
+        background: #000;
+      }
 
-        #unity-container {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
+      #unity-container {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
 
-        #unity-canvas {
-            width: 100%;
-            height: 100%;
-            background: #231F20;
-        }
+      #unity-canvas {
+        width: 100%;
+        height: 100%;
+        background: #231f20;
+      }
 
-        .unity-mobile #unity-canvas {
-            width: 100%;
-            height: 100%;
-        }
+      .unity-mobile #unity-canvas {
+        width: 100%;
+        height: 100%;
+      }
     </style>
 
     <style>
-        #orientation-blocker {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #231F20;
-            z-index: 10000;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
+      #orientation-blocker {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #231f20;
+        z-index: 10000;
+        color: white;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
 
-        #mobile-continue-button {
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 25px;
-        }
-        /* (滑块修复) */
-        #unity-footer {
-            position: absolute;
-            bottom: 5px;
-            right: 5px;
-            z-index: 999;
-        }
+      #mobile-continue-button {
+        padding: 12px 25px;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 25px;
+      }
+      /* (滑块修复) */
+      #unity-footer {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        z-index: 999;
+      }
     </style>
-</head>
-<body>
-
-    <div id="orientation-blocker" style="display: none;">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7.5 4.5H5.25C4.83579 4.5 4.5 4.83579 4.5 5.25V7.5M16.5 4.5H18.75C19.1642 4.5 19.5 4.83579 19.5 5.25V7.5M7.5 19.5H5.25C4.83579 19.5 4.5 19.1642 4.5 18.75V16.5M16.5 19.5H18.75C19.1642 19.5 19.5 19.1642 19.5 18.75V16.5M17.25 12C17.25 14.8995 14.8995 17.25 12 17.25C9.10051 17.25 6.75 14.8995 6.75 12C6.75 9.10051 9.10051 6.75 12 6.75C14.8995 6.75 17.25 9.10051 17.25 12Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <h2 style="margin-top: 20px;">欢迎！</h2>
-        <p>为了获得最佳体验，请关闭竖屏锁定并将您的设备旋转至横屏模式。</p>
-        <button id="mobile-continue-button">我知道了</button>
+  </head>
+  <body>
+    <div id="orientation-blocker" style="display: none">
+      <svg
+        width="64"
+        height="64"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M7.5 4.5H5.25C4.83579 4.5 4.5 4.83579 4.5 5.25V7.5M16.5 4.5H18.75C19.1642 4.5 19.5 4.83579 19.5 5.25V7.5M7.5 19.5H5.25C4.83579 19.5 4.5 19.1642 4.5 18.75V16.5M16.5 19.5H18.75C19.1642 19.5 19.5 19.1642 19.5 18.75V16.5M17.25 12C17.25 14.8995 14.8995 17.25 12 17.25C9.10051 17.25 6.75 14.8995 6.75 12C6.75 9.10051 9.10051 6.75 12 6.75C14.8995 6.75 17.25 9.10051 17.25 12Z"
+          stroke="white"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <h2 style="margin-top: 20px">欢迎！</h2>
+      <p>为了获得最佳体验，请关闭竖屏锁定并将您的设备旋转至横屏模式。</p>
+      <button id="mobile-continue-button">我知道了</button>
     </div>
 
     <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas" width="1920" height="1080" tabindex="-1"></canvas>
-        <div id="unity-loading-bar">
-            <div id="unity-logo"></div>
-            <div id="unity-progress-bar-empty">
-                <div id="unity-progress-bar-full"></div>
-            </div>
+      <canvas
+        id="unity-canvas"
+        width="1920"
+        height="1080"
+        tabindex="-1"
+      ></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
-        <div id="unity-warning"> </div>
-        <div id="unity-footer">
-            <div id="unity-webgl-logo"></div>
-            <div id="unity-fullscreen-button"></div>
-            <div id="unity-build-title">HSKLearn</div>
-        </div>
+      </div>
+      <div id="unity-warning"></div>
+      <div id="unity-footer">
+        <div id="unity-webgl-logo"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">HSKLearn</div>
+      </div>
     </div>
 
     <script>
@@ -112,35 +127,40 @@
 
       // 【8. V8 手机提示逻辑】 (不变)
       var orientationBlocker = document.querySelector("#orientation-blocker");
-      var mobileContinueButton = document.querySelector("#mobile-continue-button");
+      var mobileContinueButton = document.querySelector(
+        "#mobile-continue-button"
+      );
       var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       if (isMobile) {
-          if (orientationBlocker) {
-              orientationBlocker.style.display = 'flex';
-          }
-          if (container) {
-              container.style.display = 'none';
-          }
-          if (mobileContinueButton) {
-              mobileContinueButton.onclick = function() {
-                  orientationBlocker.style.display = 'none';
-                  container.style.display = 'block';
-              };
-          }
+        if (orientationBlocker) {
+          orientationBlocker.style.display = "flex";
+        }
+        if (container) {
+          container.style.display = "none";
+        }
+        if (mobileContinueButton) {
+          mobileContinueButton.onclick = function () {
+            orientationBlocker.style.display = "none";
+            container.style.display = "block";
+          };
+        }
       }
 
       // 【9. unityShowBanner 函数】 (不变)
       function unityShowBanner(msg, type) {
         function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+          warningBanner.style.display = warningBanner.children.length
+            ? "block"
+            : "none";
         }
-        var div = document.createElement('div');
+        var div = document.createElement("div");
         div.innerHTML = msg;
         warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        if (type == "error") div.style = "background: red; padding: 10px;";
         else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
+          if (type == "warning")
+            div.style = "background: yellow; padding: 10px;";
+          setTimeout(function () {
             warningBanner.removeChild(div);
             updateBannerVisibility();
           }, 5000);
@@ -171,10 +191,11 @@
 
       // (V13 手机配置, 不变)
       if (isMobile) {
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
+        var meta = document.createElement("meta");
+        meta.name = "viewport";
+        meta.content =
+          "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+        document.getElementsByTagName("head")[0].appendChild(meta);
         container.className = "unity-mobile";
         canvas.className = "unity-mobile";
       }
@@ -187,40 +208,53 @@
       unityLoaderScript.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                loadingBar.style.display = "none";
-                fullscreenButton.onclick = () => {
-                  unityInstance.SetFullscreen(1);
-                };
-              }).catch((message) => {
-                alert(message);
-              });
+        })
+          .then((unityInstance) => {
+            loadingBar.style.display = "none";
+            fullscreenButton.onclick = () => {
+              unityInstance.SetFullscreen(1);
             };
+          })
+          .catch((message) => {
+            alert(message);
+          });
+      };
 
-        // 1. 动态创建 TCB SDK 脚本
-        var tcbSdkScript = document.createElement("script");
-        tcbSdkScript.id = "tcb-sdk-script";
+      // 1. 动态创建 TCB SDK 脚本
+      var tcbSdkScript = document.createElement("script");
+      tcbSdkScript.id = "tcb-sdk-script";
 
-        // 2. 【关键】: 先设置 onload 回调, 保证它一定会被触发
-        tcbSdkScript.onload = () => {
-            console.log("TCB SDK Script (tcb-sdk-script) has loaded. Initializing...");
+      // 2. 【关键】: 先设置 onload 回调, 保证它一定会被触发
+      tcbSdkScript.onload = () => {
+        console.log(
+          "TCB SDK Script (tcb-sdk-script) has loaded. Initializing..."
+        );
 
-            window.tcbApp = cloudbase.init({
-                env: "cloud1-6gunwckv7cc1c3c3" // 你的环境ID
-            });
-            window.tcbAuth = window.tcbApp.auth();
-            window.tcbDb = window.tcbApp.database();
-            console.log("TCB App, Auth, and DB are now global (V21 Fix).");
+        window.tcbApp = cloudbase.init({
+          env: "cloud1-6gunwckv7cc1c3c3", // 你的环境ID
+        });
+        window.tcbAuth = window.tcbApp.auth();
+        window.tcbDb = window.tcbApp.database();
+        console.log("TCB App, Auth, and DB are now global (V21 Fix).");
 
-            // 3. TCB 初始化成功后, 才去加载 Unity
-            document.body.appendChild(unityLoaderScript);
-        };
+        // 2.1 补丁：若 CleanExpiredGuests 未定义，则提供一个安全的空实现
+        if (typeof window.CleanExpiredGuests !== "function") {
+          window.CleanExpiredGuests = function () {
+            try {
+              console.log("[TcbWebGL] CleanExpiredGuests noop");
+            } catch (e) {}
+            return Promise.resolve();
+          };
+        }
 
-        // 4. 【关键】: 设置 src 并把 TCB 脚本添加到 DOM 中, 开始加载
-        tcbSdkScript.src = "cloudbase.full.js"; // 使用我们本地的JS文件
-        document.body.appendChild(tcbSdkScript);
-        // 【【【【 到这里结束是新代码 】】】】
+        // 3. TCB 初始化成功后, 才去加载 Unity
+        document.body.appendChild(unityLoaderScript);
+      };
 
+      // 4. 【关键】: 设置 src 并把 TCB 脚本添加到 DOM 中, 开始加载
+      tcbSdkScript.src = "cloudbase.full.js"; // 使用我们本地的JS文件
+      document.body.appendChild(tcbSdkScript);
+      // 【【【【 到这里结束是新代码 】】】】
     </script>
-</body>
+  </body>
 </html>
