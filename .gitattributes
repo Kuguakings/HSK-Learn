@@ -1,13 +1,49 @@
-# 【核心修复】强制 WebGL 运行文件不使用 LFS，而是作为普通二进制文件
+###############################################################################
+# 1. 核心修复：Unity 开发素材强制走 LFS (解决你的 PSD 报错问题)
+###############################################################################
+*.psd filter=lfs diff=lfs merge=lfs -text
+*.pdf filter=lfs diff=lfs merge=lfs -text
+*.ai filter=lfs diff=lfs merge=lfs -text
+*.ttc filter=lfs diff=lfs merge=lfs -text
+*.ttf filter=lfs diff=lfs merge=lfs -text
+
+# 3D 模型 & 动画
+*.fbx filter=lfs diff=lfs merge=lfs -text
+*.obj filter=lfs diff=lfs merge=lfs -text
+*.blend filter=lfs diff=lfs merge=lfs -text
+
+# 音频 & 视频
+*.wav filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text
+*.ogg filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+
+# 图片 (防止大图卡死 Git)
+*.png filter=lfs diff=lfs merge=lfs -text
+*.jpg filter=lfs diff=lfs merge=lfs -text
+*.tga filter=lfs diff=lfs merge=lfs -text
+*.bmp filter=lfs diff=lfs merge=lfs -text
+
+# Unity 特殊大文件
+*.unitypackage filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
+*.a filter=lfs diff=lfs merge=lfs -text
+
+###############################################################################
+# 2. 保留你原来的 WebGL 设置 (如果你确实想把游戏发布到 GitHub Pages)
+###############################################################################
+# 这里的逻辑是：发布的 Build 文件不走 LFS (省流量)，但作为二进制处理
 *.wasm binary -text -filter=lfs -diff=lfs -merge=lfs
 *.data binary -text -filter=lfs -diff=lfs -merge=lfs
 *.framework.js binary -text -filter=lfs -diff=lfs -merge=lfs
 build.loader.js binary -text -filter=lfs -diff=lfs -merge=lfs
 
-# 其他文件保持默认
-*.js text
+###############################################################################
+# 3. 基础设置
+###############################################################################
+*.cs text diff=csharp
+*.shader text
+*.xml text
+*.json text
 *.html text
 *.css text
-*.json text
-*.png binary
-*.jpg binary
