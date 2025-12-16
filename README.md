@@ -14,8 +14,6 @@ Click the button below to play the latest web version:
 
 # 📂 Project Architecture (For Developers)
 
-Since you are handling the code, please pay attention to the **Cloud Bridge**.
-
 ### 1. ☁️ Tencent Cloud Bridge (The Core)
 This project uses a hybrid architecture. The C# code cannot talk to the cloud directly; it must go through a bridge.
 
