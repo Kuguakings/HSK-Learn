@@ -1,4 +1,4 @@
-// SettingsManager.cs (¡¾¡¾¡¾ÐÞ¸´ WebGL Æô¶¯±ÀÀ£°æ¡¿¡¿¡¿)
+// SettingsManager.cs (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ WebGL ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ¡¿ï¿½ï¿½ï¿½ï¿½)
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -7,7 +7,7 @@ using System.Linq;
 
 public class SettingsManager : MonoBehaviour
 {
-    [Header("UI ¿Ø¼þÒýÓÃ")]
+    [Header("UI ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public TMP_Dropdown resolutionDropdown;
     public Toggle fullscreenToggle;
 
@@ -16,18 +16,18 @@ public class SettingsManager : MonoBehaviour
 
     void Start()
     {
-        // ¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾ BUG ÐÞ¸´ ¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿
-        // WebGL ²»Ö§³Ö Screen.resolutions »ò Screen.SetResolution¡£
-        // ±ØÐë½ûÓÃ´Ë´úÂë¿é£¬·ñÔò»áµ¼ÖÂÆô¶¯Ê±¡°³ÁÄ¬±ÀÀ£¡±¡£
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ BUG ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // WebGL ï¿½ï¿½Ö§ï¿½ï¿½ Screen.resolutions ï¿½ï¿½ Screen.SetResolutionï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´Ë´ï¿½ï¿½ï¿½é£¬ï¿½ï¿½ï¿½ï¿½áµ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #if UNITY_WEBGL
-        // 1. ÔÚ WebGL ÖÐ£¬½ûÓÃÏÂÀ­¿ò²¢¡¾Á¢¼´Í£Ö¹¡¿
+        // 1. ï¿½ï¿½ WebGL ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò²¢¡ï¿½ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½
         if (resolutionDropdown != null)
         {
             resolutionDropdown.gameObject.SetActive(false);
         }
         
-        // (ÔÚ WebGL ÖÐ£¬È«ÆÁÇÐ»»ÓÉä¯ÀÀÆ÷´¦Àí£¬
-        //  ÎÒÃÇ¿ÉÒÔÑ¡ÔñÒ²½ûÓÃÕâ¸ö Toggle)
+        // (ï¿½ï¿½ WebGL ï¿½Ð£ï¿½È«ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //  ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Toggle)
         // if (fullscreenToggle != null)
         // {
         //    fullscreenToggle.gameObject.SetActive(false);
@@ -35,10 +35,10 @@ public class SettingsManager : MonoBehaviour
         
 #else
 
-        // 2. ¡¾¡¾¡¾ÐÞ¸´¡¿¡¿¡¿: Ö»ÓÐÔÚ ·ÇWebGL Æ½Ì¨²ÅÔËÐÐÕâ¶Î´úÂë
+        // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: Ö»ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½WebGL Æ½Ì¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½ï¿½
         supportedResolutions = Screen.resolutions;
 
-        // ¹ýÂËµôË¢ÐÂÂÊ²»Í¬µÄÖØ¸´·Ö±æÂÊ£¬²¢È·±£·Ö±æÂÊÖÁÉÙÎª 1024x768
+        // ï¿½ï¿½ï¿½Ëµï¿½Ë¢ï¿½ï¿½ï¿½Ê²ï¿½Í¬ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½Ö±ï¿½ï¿½Ê£ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª 1024x768
         filteredResolutions = new List<Resolution>();
         HashSet<string> resolutionStrings = new HashSet<string>();
 
@@ -55,7 +55,7 @@ public class SettingsManager : MonoBehaviour
             }
         }
 
-        // Ìî³äÏÂÀ­²Ëµ¥
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½
         resolutionDropdown.ClearOptions();
         List<string> options = new List<string>();
         foreach (var res in filteredResolutions)
@@ -64,28 +64,25 @@ public class SettingsManager : MonoBehaviour
         }
         resolutionDropdown.AddOptions(options);
 
-        // ¼ÓÔØ²¢Ó¦ÓÃÉèÖÃ
+        // ï¿½ï¿½ï¿½Ø²ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         LoadAndApplySettings();
 
 #endif
-        // ¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾ ÐÞ¸´½áÊø ¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
     public void ApplySettings()
     {
-        // ¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾ BUG ÐÞ¸´ ¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿
-        // Í¬Ñù£¬ÔÚ WebGL Æ½Ì¨½ûÓÃ´Ëº¯Êý
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ BUG ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // Í¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ WebGL Æ½Ì¨ï¿½ï¿½ï¿½Ã´Ëºï¿½ï¿½ï¿½
 #if !UNITY_WEBGL
 
-        // »ñÈ¡Ñ¡ÔñµÄ·Ö±æÂÊ
         Resolution selectedResolution = filteredResolutions[resolutionDropdown.value];
         bool isFullscreen = fullscreenToggle.isOn;
 
-        // Ó¦ÓÃÉèÖÃ
         Screen.SetResolution(selectedResolution.width, selectedResolution.height, isFullscreen);
-        Debug.Log($"Ó¦ÓÃ·Ö±æÂÊ: {selectedResolution.width}x{selectedResolution.height}, È«ÆÁ: {isFullscreen}");
+        Debug.Log($"Applied resolution: {selectedResolution.width}x{selectedResolution.height}, fullscreen: {isFullscreen}");
 
-        // ±£´æÉèÖÃ
         SaveSettings(resolutionDropdown.value, isFullscreen);
 
 #endif
@@ -96,28 +93,28 @@ public class SettingsManager : MonoBehaviour
         PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
         PlayerPrefs.SetInt("IsFullscreen", isFullscreen ? 1 : 0);
         PlayerPrefs.Save();
-        Debug.Log("ÉèÖÃÒÑ±£´æ£¡");
+        Debug.Log("Settings saved.");
     }
 
     private void LoadAndApplySettings()
     {
-        // ¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾¡¾ BUG ÐÞ¸´ ¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿¡¿
-        // Õâ¶Î´úÂëÒ²±ØÐëÔÚ WebGL Æ½Ì¨±»½ûÓÃ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ BUG ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ï¿½ï¿½Î´ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ WebGL Æ½Ì¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #if !UNITY_WEBGL
 
-        // ¼ÓÔØ·Ö±æÂÊ£¬Èç¹û²»´æÔÚ£¬ÔòÄ¬ÈÏÎª×î¸ß·Ö±æÂÊ
+        // ï¿½ï¿½ï¿½Ø·Ö±ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Îªï¿½ï¿½ß·Ö±ï¿½ï¿½ï¿½
         int resolutionIndex = PlayerPrefs.GetInt("ResolutionIndex", filteredResolutions.Count - 1);
 
-        // È·±£Ë÷ÒýÔÚÓÐÐ§·¶Î§ÄÚ
+        // È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½Î§ï¿½ï¿½
         if (resolutionIndex >= filteredResolutions.Count)
         {
             resolutionIndex = filteredResolutions.Count - 1;
         }
 
-        // ¼ÓÔØÈ«ÆÁÉèÖÃ£¬Èç¹û²»´æÔÚ£¬ÔòÄ¬ÈÏÎªÊÇ
+        // ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½Îªï¿½ï¿½
         bool isFullscreen = PlayerPrefs.GetInt("IsFullscreen", 1) == 1;
 
-        // ¸üÐÂUIÏÔÊ¾
+        // ï¿½ï¿½ï¿½ï¿½UIï¿½ï¿½Ê¾
         resolutionDropdown.value = resolutionIndex;
         resolutionDropdown.RefreshShownValue();
         fullscreenToggle.isOn = isFullscreen;

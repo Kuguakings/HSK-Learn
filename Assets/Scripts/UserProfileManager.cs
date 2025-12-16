@@ -37,28 +37,35 @@ public class UserProfileManager : MonoBehaviour, IPointerClickHandler
         }
         else
         {
-            usernameText.text = "加载中...";
+            usernameText.text = "Loading...";
         }
 
         // 2. 更新角色/权限显示
-        if (TcbManager.IsAdmin)
+        if (TcbManager.UserLevel == -1)
+        {
+            // 游客
+            roleText.text = "Guest";
+            roleText.color = Color.gray;
+            usernameText.color = Color.gray;
+        }
+        else if (TcbManager.IsAdmin)
         {
             if (TcbManager.AdminLevel >= 999)
             {
-                roleText.text = "超级管理员";
+                roleText.text = "Super Admin";
                 roleText.color = superAdminColor;
                 usernameText.color = superAdminColor;
             }
             else
             {
-                roleText.text = "管理员";
+                roleText.text = "Admin";
                 roleText.color = adminColor;
                 usernameText.color = adminColor;
             }
         }
         else
         {
-            roleText.text = "学员";
+            roleText.text = "Student";
             roleText.color = userColor;
             usernameText.color = Color.white; // 普通用户名字白色
         }
@@ -67,18 +74,47 @@ public class UserProfileManager : MonoBehaviour, IPointerClickHandler
     // 处理点击事件
     public void OnPointerClick(PointerEventData eventData)
     {
+        // 游客点击任意键都弹出转正/登录选项
+        if (TcbManager.UserLevel == -1)
+        {
+            Debug.Log("Guest clicked avatar; showing login panel.");
+            ShowLoginPanelForGuest();
+            return;
+        }
+
         // 只有右键点击才触发改名
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            Debug.Log("右键点击用户头像，打开改名框...");
+            Debug.Log("Right-clicked avatar; opening rename prompt.");
             string currentName = TcbManager.CurrentNickname;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
             // 【修复】调用原生浏览器输入框
             JsShowNativePrompt(currentName, gameObject.name, "OnReceiveNewName");
 #else
-            Debug.LogWarning("编辑器不支持 WebGL 输入框，请打包测试");
+            Debug.LogWarning("WebGL input prompt not supported in editor; build to test.");
 #endif
+        }
+    }
+
+    // 游客点击后显示登录面板
+    private void ShowLoginPanelForGuest()
+    {
+        if (TcbManager.instance != null && TcbManager.instance.loginCanvasGroup != null)
+        {
+            // 显示登录面板，让游客选择转正或登录
+            TcbManager.instance.loginCanvasGroup.alpha = 1;
+            TcbManager.instance.loginCanvasGroup.interactable = true;
+            TcbManager.instance.loginCanvasGroup.blocksRaycasts = true;
+            TcbManager.instance.loginCanvasGroup.gameObject.SetActive(true);
+            
+            // 隐藏主菜单
+            if (TcbManager.instance.mainMenuObjectGroup != null)
+            {
+                TcbManager.instance.mainMenuObjectGroup.alpha = 0;
+                TcbManager.instance.mainMenuObjectGroup.interactable = false;
+                TcbManager.instance.mainMenuObjectGroup.blocksRaycasts = false;
+            }
         }
     }
 

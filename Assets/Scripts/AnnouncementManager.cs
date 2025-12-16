@@ -10,7 +10,7 @@ public class AnnouncementManager : MonoBehaviour
 {
     public static AnnouncementManager instance;
 
-    [Header("UI Ãæ°åÒýÓÃ")]
+    [Header("UI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public GameObject announcementButton;
     public GameObject redDot;
     public GameObject mainPanel;
@@ -18,13 +18,13 @@ public class AnnouncementManager : MonoBehaviour
     public GameObject detailPanel;
     public GameObject commentOptionPanel;
 
-    [Header("ÁÐ±í UI")]
+    [Header("ï¿½Ð±ï¿½ UI")]
     public Transform listContainer;
     public GameObject itemPrefab;
     public Button createButton;
     public Button mainListCloseButton;
 
-    [Header("±à¼­ UI")]
+    [Header("ï¿½à¼­ UI")]
     public TMP_InputField titleInput;
     public TMP_InputField tagInput;
     public TextMeshProUGUI editorNameText;
@@ -37,7 +37,7 @@ public class AnnouncementManager : MonoBehaviour
     public TextMeshProUGUI warningText;
     public Button closeEditorButton;
 
-    [Header("ÏêÇé UI")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ UI")]
     public TextMeshProUGUI detailTitle;
     public TextMeshProUGUI detailInfo;
     public TextMeshProUGUI detailContent;
@@ -47,13 +47,13 @@ public class AnnouncementManager : MonoBehaviour
     public Button postCommentButton;
     public Button closeDetailButton;
 
-    [Header("ÆÀÂÛ²Ù×÷ UI")]
+    [Header("ï¿½ï¿½ï¿½Û²ï¿½ï¿½ï¿½ UI")]
     public TextMeshProUGUI commentOptionInfoText;
     public Button btnOptModify;
     public Button btnOptDelete;
     public Button btnOptBack;
 
-    [Header("ÅäÖÃ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½")]
     public float autoPopupIntervalHours = 12f;
     public float fadeDuration = 0.6f;
     private const string PREF_LAST_READ_TIME = "Announce_LastReadTime";
@@ -68,7 +68,7 @@ public class AnnouncementManager : MonoBehaviour
     private string tempContentCache = "";
     private Coroutine currentWarningRoutine;
 
-    // ¡¾ºËÐÄÐÞ¸´¡¿¸ÄÎªÒýÓÃ Native Prompt
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ Native Prompt
     [DllImport("__Internal")]
     private static extern void JsShowNativePrompt(string existingText, string objectName, string callbackSuccess);
 
@@ -139,6 +139,16 @@ public class AnnouncementManager : MonoBehaviour
         while (!TcbManager.isLoggedIn) yield return null;
         if (createButton) createButton.gameObject.SetActive(TcbManager.IsAdmin);
 
+        // ã€æ–°å¢žã€‘æ¸¸å®¢ç”¨æˆ·æ¯æ¬¡è¿›å…¥éƒ½å¼¹å‡ºå…¬å‘Š
+        if (TcbManager.UserLevel == -1)
+        {
+            Debug.Log("[AnnouncementManager] æ¸¸å®¢ç”¨æˆ·ï¼Œè‡ªåŠ¨å¼¹å‡ºå…¬å‘Š");
+            yield return new WaitForSeconds(0.5f); // ç¨å¾®å»¶è¿Ÿï¼Œç­‰å¾…UIç¨³å®š
+            OpenMainPanel();
+            yield break;
+        }
+
+        // æ­£å¼ç”¨æˆ·ï¼šæŒ‰åŽŸæœ‰é€»è¾‘ï¼Œæ ¹æ®æ—¶é—´é—´éš”æ˜¾ç¤ºçº¢ç‚¹
         string lastReadStr = PlayerPrefs.GetString(PREF_LAST_READ_TIME, "0");
         long lastReadTime = long.Parse(lastReadStr);
         long currentTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -154,7 +164,7 @@ public class AnnouncementManager : MonoBehaviour
         string content = commentInput.text;
         if (string.IsNullOrEmpty(content)) return;
 
-        Debug.Log("ÕýÔÚ·¢ËÍÆÀÂÛ: " + content);
+        Debug.Log("ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: " + content);
 
         AnnouncementComment newComment = new AnnouncementComment
         {
@@ -167,10 +177,10 @@ public class AnnouncementManager : MonoBehaviour
         };
 
         TcbManager.instance.AddDocument("announcement_comments", newComment, () => {
-            Debug.Log("ÆÀÂÛ·¢ËÍ³É¹¦£¡");
+            Debug.Log("ï¿½ï¿½ï¿½Û·ï¿½ï¿½Í³É¹ï¿½ï¿½ï¿½");
             commentInput.text = "";
             RefreshComments(currentEditingData._id);
-        }, (err) => Debug.LogError("ÆÀÂÛ·¢ËÍÊ§°Ü: " + err));
+        }, (err) => Debug.LogError("ï¿½ï¿½ï¿½Û·ï¿½ï¿½ï¿½Ê§ï¿½ï¿½: " + err));
     }
 
     private void OnCommentRightClicked(AnnouncementComment comment)
@@ -178,7 +188,7 @@ public class AnnouncementManager : MonoBehaviour
         currentSelectedComment = comment;
         DateTime dt = DateTimeOffset.FromUnixTimeSeconds(comment.createdAt).LocalDateTime;
         if (commentOptionInfoText)
-            commentOptionInfoText.text = $"{comment.userNickname}\n·¢²¼ÓÚ {dt.ToString("MM.dd HH:mm")}";
+            commentOptionInfoText.text = $"{comment.userNickname}\nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {dt.ToString("MM.dd HH:mm")}";
         ShowPanel(commentOptionCG);
     }
 
@@ -190,15 +200,15 @@ public class AnnouncementManager : MonoBehaviour
 
         if (!isMine && !isAdmin)
         {
-            Debug.LogWarning("ÎÞÈ¨É¾³ýËûÈËÆÀÂÛ");
+            Debug.LogWarning("ï¿½ï¿½È¨É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
         TcbManager.instance.DeleteDocument("announcement_comments", currentSelectedComment._id, () => {
-            Debug.Log("ÆÀÂÛÉ¾³ý³É¹¦");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½É¹ï¿½");
             ClosePanel(commentOptionCG);
             RefreshComments(currentEditingData._id);
-        }, (err) => Debug.LogError("É¾³ýÆÀÂÛÊ§°Ü: " + err));
+        }, (err) => Debug.LogError("É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½: " + err));
     }
 
     private void OpenModifyCommentInput()
@@ -209,10 +219,10 @@ public class AnnouncementManager : MonoBehaviour
         if (!isMine && !isAdmin) return;
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-        // ¡¾ÐÞ¸´¡¿Ê¹ÓÃ Native Prompt
+        // ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ Native Prompt
         JsShowNativePrompt(currentSelectedComment.content, gameObject.name, "OnModifyCommentSuccess");
 #else
-        OnModifyCommentSuccess(currentSelectedComment.content + " [ÐÞ¸Ä]");
+        OnModifyCommentSuccess(currentSelectedComment.content + " [ï¿½Þ¸ï¿½]");
 #endif
     }
 
@@ -227,10 +237,10 @@ public class AnnouncementManager : MonoBehaviour
             currentSelectedComment.modifiedInfo = "";
 
         TcbManager.instance.SetDocument("announcement_comments", currentSelectedComment._id, currentSelectedComment, () => {
-            Debug.Log("ÆÀÂÛÐÞ¸Ä³É¹¦");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸Ä³É¹ï¿½");
             ClosePanel(commentOptionCG);
             RefreshComments(currentEditingData._id);
-        }, (err) => Debug.LogError("ÐÞ¸ÄÆÀÂÛÊ§°Ü: " + err));
+        }, (err) => Debug.LogError("ï¿½Þ¸ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½: " + err));
     }
 
     private void RefreshComments(string announcementId)
@@ -325,7 +335,7 @@ public class AnnouncementManager : MonoBehaviour
         currentEditingData = data;
         detailTitle.text = data.title;
         DateTime dt = DateTimeOffset.FromUnixTimeSeconds(data.updatedAt).LocalDateTime;
-        detailInfo.text = $"×÷Õß: {data.authorName}   Ê±¼ä: {dt.ToString("yyyy/MM/dd HH:mm")}";
+        detailInfo.text = $"ï¿½ï¿½ï¿½ï¿½: {data.authorName}   Ê±ï¿½ï¿½: {dt.ToString("yyyy/MM/dd HH:mm")}";
         detailContent.text = data.content;
         RefreshComments(data._id);
     }
@@ -345,7 +355,7 @@ public class AnnouncementManager : MonoBehaviour
         if (!isDraft && !isSuperAdmin)
         {
             if (currentWarningRoutine != null) StopCoroutine(currentWarningRoutine);
-            currentWarningRoutine = StartCoroutine(ShowWarningAnim("È¨ÏÞ²»×ã£ºÇëÁªÏµ³¬¼¶¹ÜÀíÔ±½øÐÐÉ¾³ý"));
+            currentWarningRoutine = StartCoroutine(ShowWarningAnim("È¨ï¿½Þ²ï¿½ï¿½ã£ºï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½"));
             return;
         }
         if (string.IsNullOrEmpty(currentEditingData._id))
@@ -416,7 +426,7 @@ public class AnnouncementManager : MonoBehaviour
     {
         while (editorPanel.activeSelf)
         {
-            if (editorNameText) editorNameText.text = "±à¼­: " + TcbManager.CurrentNickname;
+            if (editorNameText) editorNameText.text = "ï¿½à¼­: " + TcbManager.CurrentNickname;
             if (editorTimeText) editorTimeText.text = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
             yield return new WaitForSeconds(1f);
         }
@@ -425,7 +435,7 @@ public class AnnouncementManager : MonoBehaviour
     private void OpenJsInput()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        // ¡¾ÐÞ¸´¡¿Ê¹ÓÃ Native Prompt
+        // ï¿½ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ Native Prompt
         JsShowNativePrompt(tempContentCache, gameObject.name, "OnJsInputSuccess");
 #else
         OnJsInputSuccess(tempContentCache + " (Simulated)");
@@ -438,7 +448,7 @@ public class AnnouncementManager : MonoBehaviour
         currentEditingData.content = text;
         contentPreviewText.text = text.Length > 100 ? text.Substring(0, 100) + "..." : text;
     }
-    // OnJsInputError ²»ÔÙÐèÒª£¬µ«Èç¹ûÆäËûµØ·½»¹ÔÚÒýÓÃ£¬¿ÉÒÔÁô¸ö¿Õº¯Êý£¬»òÕßÖ±½ÓÉ¾µô¡£ÕâÀïÉ¾µôÁË¡£
+    // OnJsInputError ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½Ë¡ï¿½
 
     private void SaveDraft()
     {

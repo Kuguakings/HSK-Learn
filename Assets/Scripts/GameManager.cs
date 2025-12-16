@@ -118,25 +118,25 @@ public class GameManager : MonoBehaviour
         if (dataToLoad == null)
         {
             // 测试模式 / Test mode
-            Debug.LogWarning("未找到 LevelManager.selectedLevelData，已进入【测试模式】/ No LevelManager.selectedLevelData found, entering test mode");
+            Debug.LogWarning("LevelManager.selectedLevelData missing; entering test mode.");
             if (testLevelAsset != null)
             {
-                levelTitleText.text = "测试关卡 / Test Level";
+                levelTitleText.text = "Test Level";
                 LoadLevelDataFromAsset(testLevelAsset);
             }
             else
             {
-                Debug.LogError("测试模式启动失败: 未指定测试关卡! / Test mode failed: No test level assigned!");
+                Debug.LogError("Test mode failed: No test level asset assigned.");
                 return;
             }
         }
         else
         {
             // 正常模式：从LevelManager加载 / Normal mode: Load from LevelManager
-            levelTitleText.text = dataToLoad.chapter + " - 第 " + dataToLoad.level + " 关";
+            levelTitleText.text = dataToLoad.chapter + " - Level " + dataToLoad.level;
             if (LevelManager.isTestPlayMode)
             {
-                levelTitleText.text += " (测试 / Test)";
+                levelTitleText.text += " (Test)";
             }
             LoadLevelDataFromFirebase(dataToLoad);
         }
@@ -157,7 +157,7 @@ public class GameManager : MonoBehaviour
         elapsedTime += Time.deltaTime;
         int minutes = (int)(elapsedTime / 60);
         int seconds = (int)(elapsedTime % 60);
-        timerText.text = "ʱ��: " + string.Format("{0:00}:{1:00}", minutes, seconds);
+        timerText.text = "Time: " + string.Format("{0:00}:{1:00}", minutes, seconds);
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             TogglePause();
@@ -194,7 +194,7 @@ public class GameManager : MonoBehaviour
         allWordsForLevel.Clear();
         if (data.content_mode_1 == null || data.content_mode_1.Count == 0)
         {
-            Debug.LogError($"���󣺹ؿ� {data.id} û�� Mode 1 (content_mode_1) ���ݣ�");
+            Debug.LogError($"Error: Level {data.id} is missing Mode 1 (content_mode_1) data.");
             return;
         }
         foreach (Mode1Content firebaseWord in data.content_mode_1)
@@ -216,13 +216,13 @@ public class GameManager : MonoBehaviour
         isLevelComplete = true;
         int minutes = (int)(elapsedTime / 60);
         int seconds = (int)(elapsedTime % 60);
-        string finalTimeStr = string.Format("��ʱ: {0:00}:{1:00}", minutes, seconds);
-        string finalScoreStr = "����: " + currentScore;
+        string finalTimeStr = string.Format("Time: {0:00}:{1:00}", minutes, seconds);
+        string finalScoreStr = "Score: " + currentScore;
 
         // ������ ���޸� ����������� ����ģʽ �� ����Ա��¼
         if (LevelManager.isTestPlayMode || LevelManager.IsAdmin)
         {
-            Debug.Log("����/����Աͨ������ʾ���������塣");
+            Debug.Log("Test/Admin mode: show completion panel without progression updates.");
             if (testPlayCompletePanel != null)
             {
                 testPlayCompletePanel.SetActive(true);
@@ -388,8 +388,8 @@ public class GameManager : MonoBehaviour
         if (activeTileCount == 0 && !isLevelComplete)
         {
             currentPage++;
-            if (currentPage < totalPages) { Debug.Log($"ҳ�� {currentPage - 1} ���! ������һҳ: {currentPage}"); LoadPage(currentPage); }
-            else { Debug.Log("����ҳ�������ɣ��ؿ�ʤ����"); HandleLevelComplete(); }
+            if (currentPage < totalPages) { Debug.Log($"Page {currentPage - 1} cleared! Loading next page: {currentPage}"); LoadPage(currentPage); }
+            else { Debug.Log("All pages cleared, level complete."); HandleLevelComplete(); }
         }
     }
 
@@ -494,16 +494,16 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>更新分数显示 / Update Score Display</summary>
-    void UpdateScoreDisplay() { scoreText.text = "分数 / Score: " + currentScore; }
+    void UpdateScoreDisplay() { scoreText.text = "Score: " + currentScore; }
 
     /// <summary>重新开始当前关卡 / Restart Current Level</summary>
     public void OnClick_RestartCurrentLevel() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.ReloadCurrentLevel(); } else { SceneManager.LoadScene(SceneManager.GetActiveScene().name); } }
     
     /// <summary>进入下一关 / Next Level</summary>
-    public void OnClick_NextLevel() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.LoadNextLevel(); } else { Debug.LogWarning("测试模式，无法加载下一关。/ Test mode, cannot load next level."); } }
+    public void OnClick_NextLevel() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.LoadNextLevel(); } else { Debug.LogWarning("Test mode: next level unavailable."); } }
     
     /// <summary>从第一关重新开始 / Restart from First Level</summary>
-    public void OnClick_RestartGame() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.RestartGame(); } else { Debug.LogWarning("测试模式，无法从第一关重新开始。/ Test mode, cannot restart from first level."); } }
+    public void OnClick_RestartGame() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.RestartGame(); } else { Debug.LogWarning("Test mode: cannot restart from first level."); } }
     
     /// <summary>返回主菜单 / Return to Main Menu</summary>
     public void OnClick_MainMenu() { Time.timeScale = 1f; if (LevelManager.instance != null) { LevelManager.instance.LoadMainMenu(); } else { SceneManager.LoadScene("MainMenu"); } }

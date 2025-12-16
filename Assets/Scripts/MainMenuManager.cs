@@ -109,13 +109,38 @@ public class MainMenuManager : MonoBehaviour
     // (���Ĵ���ԭ�ⲻ��)
     public void StartMode(int mode)
     {
+        // 【游客限制】：游客只能玩单词消消乐（WordMatch3）
+        if (TcbManager.UserLevel == -1 && (GameMode)mode == GameMode.WordLinkUp)
+        {
+            Debug.Log("[MainMenuManager] Guest tried to enter Word Link Up; showing upgrade prompt.");
+            ShowGuestUpgradePrompt();
+            return;
+        }
+
         if (chapterSelectManager != null)
         {
             StartCoroutine(FadeOutAndShowChapterSelect(modeSelectPanelCG, (GameMode)mode));
         }
         else
         {
-            Debug.LogError("ChapterSelectManager ����δ���ã�");
+            Debug.LogError("ChapterSelectManager reference is not assigned.");
+        }
+    }
+
+    // 显示游客转正提示
+    private void ShowGuestUpgradePrompt()
+    {
+        if (TcbManager.instance != null && TcbManager.instance.loginCanvasGroup != null)
+        {
+            if (TcbManager.instance.statusText != null)
+            {
+                TcbManager.instance.statusText.text = "Guests: Word Match 3 only (first 5 levels). Upgrade for more.";
+            }
+            
+            TcbManager.instance.loginCanvasGroup.alpha = 1;
+            TcbManager.instance.loginCanvasGroup.interactable = true;
+            TcbManager.instance.loginCanvasGroup.blocksRaycasts = true;
+            TcbManager.instance.loginCanvasGroup.gameObject.SetActive(true);
         }
     }
 
@@ -137,17 +162,15 @@ public class MainMenuManager : MonoBehaviour
     /// </summary>
     public void OnClick_ShowLevelEditor()
     {
-        Debug.Log($"׼������ؿ��༭������: {levelEditorSceneName}");
+        Debug.Log($"Loading level editor scene: {levelEditorSceneName}");
 
         if (LevelManager.instance != null)
         {
-            // ʹ�� LevelManager �ĵ����������³����������ͻ��е��뵭��Ч����
             LevelManager.instance.LoadScene(levelEditorSceneName);
         }
         else
         {
-            // ��Ϊ���գ���� LevelManager ��ʧ����ֱ�Ӽ���
-            Debug.LogError("LevelManager ʵ��δ�ҵ�����ʹ�� SceneManager ֱ�Ӽ��ء�");
+            Debug.LogError("LevelManager instance not found; loading via SceneManager.");
             SceneManager.LoadScene(levelEditorSceneName);
         }
     }
@@ -195,7 +218,6 @@ public class MainMenuManager : MonoBehaviour
     {
         float elapsedTime = 0f;
 
-        // ������ʼʱ��������ֹ��������ֹ�ڶ��������е��
         cg.interactable = false;
 
         while (elapsedTime < duration)
@@ -205,71 +227,60 @@ public class MainMenuManager : MonoBehaviour
             yield return null;
         }
 
-        // ȷ����������ʱ������״̬
         cg.alpha = endAlpha;
 
-        if (endAlpha > 0) // ����ǵ��� (͸���ȴ���0)
+        if (endAlpha > 0)
         {
             cg.interactable = true;
-            cg.blocksRaycasts = true; // �������߼�� (�������)
+            cg.blocksRaycasts = true;
         }
-        else // ����ǵ��� (͸����Ϊ0)
+        else
         {
             cg.interactable = false;
-            cg.blocksRaycasts = false; // ��ֹ���߼�� (���������)
+            cg.blocksRaycasts = false;
         }
     }
 
     #endregion
 
-    // --- ���������޸� ��5�����滻���ġ��˳������������� ---
-    #region ��Ϸ�˳�
+    #region Game Exit
 
     /// <summary>
     /// �����µġ��˳���Ϸ��������������������ƽ̨
     /// </summary>
     public void ExitGame()
     {
-        Debug.Log("���˳���Ϸ����ť�������");
+        Debug.Log("Exit Game button clicked.");
 
-        // 1. ����� Unity �༭����
+        // 1. Editor
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 
-        // 2. ����� WebGL (��ҳ) ƽ̨��
+        // 2. WebGL (browser)
 #elif UNITY_WEBGL
-        // ���ǵ��á���ʾ�ټ���塱��Э�̣������� Application.Quit()��
-        // ����Ҫ�����Ǳ���Ū�����ǰ���ĸ���忪�ţ�Ȼ���������
         StartCoroutine(ShowGoodbyePanel());
 
-        // 3. �����С�������ƽ̨ (���� PC��Mac���ֻ� App)
+        // 3. Standalone/mobile
 #else
-        // ��ȫ���˳�
         Application.Quit();
 #endif
     }
 
     /// <summary>
-    /// ����һ���º����������� WebGL ƽ̨����ʾ���ټ������
-    /// �����Զ���⵱ǰ�����˵��������ò˵����������￪ʼ����
-    /// ��ע�⡿����ʹ�������е� TransitionTo Э�̣�
+    /// Show goodbye panel for WebGL builds and hide other panels first.
     /// </summary>
     private IEnumerator ShowGoodbyePanel()
     {
-        // ��鵱ǰ�ĸ�����Ǽ���� (͸����Ϊ1)
         if (mainPanelCG.alpha == 1)
         {
-            // �� ���˵� -> ���뵽 -> �ټ����
             yield return StartCoroutine(TransitionTo(mainPanelCG, goodbyePanelCG));
         }
         else if (settingsPanelCG.alpha == 1)
         {
-            // �� ���ò˵� -> ���뵽 -> �ټ����
             yield return StartCoroutine(TransitionTo(settingsPanelCG, goodbyePanelCG));
         }
         else
         {
-            // ��Ϊ�����ա������������嶼���ˣ���ֱ��ǿ����ʾ���ټ������
             mainPanel.SetActive(false);
             settingsPanel.SetActive(false);
             modeSelectPanel.SetActive(false);

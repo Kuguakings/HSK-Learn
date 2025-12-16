@@ -1,17 +1,17 @@
-// LevelSelectManager.cs (¡¾¡¾¡¾ÒÑÖØ¹¹Îª TcbManager¡¿¡¿¡¿)
+// LevelSelectManager.cs (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¹ï¿½Îª TcbManagerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq; // ¡¾ĞÂ¡¿Îª .Where() ºÍ .OrderBy() µ¼Èë
+using System.Linq; // ï¿½ï¿½ï¿½Â¡ï¿½Îª .Where() ï¿½ï¿½ .OrderBy() ï¿½ï¿½ï¿½ï¿½
 
 public class LevelSelectManager : MonoBehaviour
 {
-    [Header("UI×é¼şÒıÓÃ")]
+    [Header("UIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public TextMeshProUGUI titleText;
 
-    [Header("Ô¤ÖÆÌåºÍÈİÆ÷")]
+    [Header("Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public GameObject levelButtonPrefab;
     public Transform buttonContainer;
 
@@ -28,91 +28,120 @@ public class LevelSelectManager : MonoBehaviour
         currentMode = mode;
         gameObject.SetActive(true);
 
-        // ¡¾ĞÂ¡¿±êÌâÏÖÔÚÒ²ÏÔÊ¾ÕÂ½ÚÃû
+        // ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½Ê¾ï¿½Â½ï¿½ï¿½ï¿½
         if (mode == GameMode.WordMatch3)
         {
-            titleText.text = $"µ¥´ÊÏûÏûÀÖ - {LevelManager.selectedChapterName}";
+            titleText.text = $"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - {LevelManager.selectedChapterName}";
         }
         else if (mode == GameMode.WordLinkUp)
         {
-            titleText.text = $"´ÊÓïÁ¬Á¬¿´ - {LevelManager.selectedChapterName}";
+            titleText.text = $"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - {LevelManager.selectedChapterName}";
         }
 
         StartCoroutine(FadeCanvasGroup(0f, 1f, 0.3f));
 
-        // ¡¾¡¾¡¾ÖØ´óĞŞ¸Ä¡¿£º´Ó TcbManager ¼ÓÔØ¹Ø¿¨¡¿¡¿¡¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½Ş¸Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ TcbManager ï¿½ï¿½ï¿½Ø¹Ø¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         PopulateLevelButtons();
     }
 
     void PopulateLevelButtons()
     {
-        // ÇåÀí¾É°´Å¥
+        // ï¿½ï¿½ï¿½ï¿½ï¿½É°ï¿½Å¥
         foreach (Transform child in buttonContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // ¡¾¡¾¡¾ÖØ´óĞŞ¸Ä¡¿£º´Ó TcbManager ¶ÁÈ¡Êı¾İ¡¿¡¿¡¿
-        // ¡¾¡¾¡¾ ÖØ¹¹ ¡¿¡¿¡¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½Ş¸Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ TcbManager ï¿½ï¿½È¡ï¿½ï¿½ï¿½İ¡ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (TcbManager.AllLevels == null || TcbManager.AllLevels.levels == null)
         {
-            Debug.LogError("TcbManager.AllLevels Îª¿Õ£¡ÎŞ·¨¼ÓÔØ¹Ø¿¨£¡");
+            Debug.LogError("TcbManager.AllLevels Îªï¿½Õ£ï¿½ï¿½Ş·ï¿½ï¿½ï¿½ï¿½Ø¹Ø¿ï¿½ï¿½ï¿½");
             return;
         }
 
-        // 1. ¸ù¾İ¡°Ä£Ê½¡±ºÍ¡°ÒÑÑ¡ÕÂ½Ú¡±É¸Ñ¡
-        // 2. ¸ù¾İ¡°¹Ø¿¨ºÅ¡± (level) ÅÅĞò
+        // 1. ï¿½ï¿½ï¿½İ¡ï¿½Ä£Ê½ï¿½ï¿½ï¿½Í¡ï¿½ï¿½ï¿½Ñ¡ï¿½Â½Ú¡ï¿½É¸Ñ¡
+        // 2. ï¿½ï¿½ï¿½İ¡ï¿½ï¿½Ø¿ï¿½ï¿½Å¡ï¿½ (level) ï¿½ï¿½ï¿½ï¿½
         List<LevelData> levelsForThisChapter = TcbManager.AllLevels.levels
             .Where(l => l.mode == (long)currentMode && l.chapter == LevelManager.selectedChapterName)
             .OrderBy(l => l.level)
             .ToList();
-        // ¡¾¡¾¡¾ ÖØ¹¹½áÊø ¡¿¡¿¡¿
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         if (levelsForThisChapter.Count == 0)
         {
-            Debug.LogWarning($"ÔÚ TCB ÖĞÕÒ²»µ½ {LevelManager.selectedChapterName} (Ä£Ê½: {currentMode}) µÄÈÎºÎ¹Ø¿¨¡£");
+            Debug.LogWarning($"ï¿½ï¿½ TCB ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ {LevelManager.selectedChapterName} (Ä£Ê½: {currentMode}) ï¿½ï¿½ï¿½ÎºÎ¹Ø¿ï¿½ï¿½ï¿½");
             return;
         }
 
-        // ±éÀú¹Ø¿¨ÁĞ±í£¬´´½¨°´Å¥
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¥
         foreach (var levelData in levelsForThisChapter)
         {
             GameObject buttonGO = Instantiate(levelButtonPrefab, buttonContainer);
 
-            // ÉèÖÃ°´Å¥ÉÏµÄÎÄ±¾Îª¹Ø¿¨ºÅ
+            // ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½Ïµï¿½ï¿½Ä±ï¿½Îªï¿½Ø¿ï¿½ï¿½ï¿½
             TextMeshProUGUI buttonText = buttonGO.GetComponentInChildren<TextMeshProUGUI>();
             if (buttonText != null)
             {
                 buttonText.text = levelData.level.ToString();
             }
 
-            // Ìí¼Óµã»÷ÊÂ¼ş
+            // ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½Â¼ï¿½
             Button button = buttonGO.GetComponent<Button>();
 
-            // ¡¾ĞÂ¡¿²¶»ñÍêÕûµÄ levelData ¶ÔÏó
+            // ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ levelData ï¿½ï¿½ï¿½ï¿½
             LevelData capturedLevelData = levelData;
 
             button.onClick.AddListener(() => {
-                OnLevelButtonClick(capturedLevelData);
+                // ã€æ¸¸å®¢é™åˆ¶ã€‘ï¼šæ¸¸å®¢åªèƒ½ç©å‰5å…³
+                if (TcbManager.UserLevel == -1 && capturedLevelData.level > 5)
+                {
+                    ShowGuestUpgradePrompt();
+                }
+                else
+                {
+                    OnLevelButtonClick(capturedLevelData);
+                }
             });
         }
     }
 
-    // ¡¾¡¾¡¾ÖØ´óĞŞ¸Ä¡¿£º²ÎÊı´Ó int index ±äÎª LevelData¡¿¡¿¡¿
+    // æ˜¾ç¤ºæ¸¸å®¢è½¬æ­£æç¤º
+    private void ShowGuestUpgradePrompt()
+    {
+        Debug.Log("[LevelSelectManager] Guest tried to access content beyond level 5.");
+        
+        // ä½¿ç”¨Unityçš„åŸç”Ÿå¯¹è¯æ¡†æˆ–è‡ªå®šä¹‰å¼¹çª—
+        // è¿™é‡Œå…ˆç”¨ç®€å•çš„æ–¹å¼ï¼šæ˜¾ç¤ºç™»å½•é¢æ¿
+        if (TcbManager.instance != null && TcbManager.instance.loginCanvasGroup != null)
+        {
+            if (TcbManager.instance.statusText != null)
+            {
+                TcbManager.instance.statusText.text = "Guests can only play first 5 levels. Please upgrade.";
+            }
+            
+            TcbManager.instance.loginCanvasGroup.alpha = 1;
+            TcbManager.instance.loginCanvasGroup.interactable = true;
+            TcbManager.instance.loginCanvasGroup.blocksRaycasts = true;
+            TcbManager.instance.loginCanvasGroup.gameObject.SetActive(true);
+        }
+    }
+
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½Ş¸Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ int index ï¿½ï¿½Îª LevelDataï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     void OnLevelButtonClick(LevelData dataToLoad)
     {
-        Debug.Log($"Ñ¡ÔñÁË¹Ø¿¨: {dataToLoad.id} (ÕÂ½Ú: {dataToLoad.chapter}, Ä£Ê½: {dataToLoad.mode})");
+        Debug.Log($"Ñ¡ï¿½ï¿½ï¿½Ë¹Ø¿ï¿½: {dataToLoad.id} (ï¿½Â½ï¿½: {dataToLoad.chapter}, Ä£Ê½: {dataToLoad.mode})");
 
         LevelManager.selectedGameMode = currentMode;
 
         if (LevelManager.instance != null)
         {
-            // ¡¾ĞÂ¡¿ÎÒÃÇ°Ñ¡°ÍêÕû¡±µÄ¹Ø¿¨Êı¾İ´«µİ¸ø LevelManager
+            // ï¿½ï¿½ï¿½Â¡ï¿½ï¿½ï¿½ï¿½Ç°Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¹Ø¿ï¿½ï¿½ï¿½ï¿½İ´ï¿½ï¿½İ¸ï¿½ LevelManager
             LevelManager.instance.LoadLevel(dataToLoad);
         }
     }
 
-    // (´Ëº¯ÊıÔ­·â²»¶¯)
+    // (ï¿½Ëºï¿½ï¿½ï¿½Ô­ï¿½â²»ï¿½ï¿½)
     private IEnumerator FadeCanvasGroup(float startAlpha, float endAlpha, float duration)
     {
         canvasGroup.interactable = false;

@@ -44,7 +44,7 @@ public class WordTile : MonoBehaviour, IPointerClickHandler
         }
         else
         {
-            Debug.LogWarning($"WordTile [{gameObject.name}]: backgroundImage为空，使用默认白色 / backgroundImage is null, using default white color");
+            Debug.LogWarning($"WordTile [{gameObject.name}]: backgroundImage is null, using default white color");
         }
     }
 

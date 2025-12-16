@@ -17,7 +17,8 @@ public class AdminData
 {
     public string _id;
     public string name;
-    public int level;
+    public int level; // 管理员级别：1=普通管理员, 999=超级管理员
+    public int userLevel = 1; // 用户等级：-1=游客, 0=学员, 1+=管理员（管理员应>=1）
 }
 
 [Serializable]
@@ -25,6 +26,7 @@ public class UserProfileData
 {
     public string nickname;
     public string role;
+    public int userLevel = 0; // -1=游客, 0=学员, 1+=管理员
 }
 
 [Serializable]
@@ -88,6 +90,7 @@ public class TcbManager : MonoBehaviour
     public static bool isLoggedIn = false;
     public static bool IsAdmin = false;
     public static int AdminLevel = 0;
+    public static int UserLevel = 0; // -1=游客, 0=学员, 1+=管理员
     public static string CurrentUid = "";
     public static string CurrentNickname = "";
 
@@ -97,6 +100,7 @@ public class TcbManager : MonoBehaviour
     private const string PREF_AUTO_LOGIN_UID = "AutoLogin_UID";
     private const string PREF_AUTO_LOGIN_NICKNAME = "AutoLogin_Nickname";
     private const string PREF_IS_ADMIN = "AutoLogin_IsAdmin";
+    private const string PREF_USER_LEVEL = "AutoLogin_UserLevel";
 
     #region JS 桥梁
     [DllImport("__Internal")] private static extern void JsRegisterUser(string e, string p, string o, string s, string r);
@@ -113,6 +117,9 @@ public class TcbManager : MonoBehaviour
     [DllImport("__Internal")] private static extern void JsDbAddDocument(string coll, string json, string reqId, string o, string s, string e);
     [DllImport("__Internal")] private static extern void JsDbDeleteDocument(string coll, string docId, string reqId, string o, string s, string e);
     [DllImport("__Internal")] private static extern void JsDbGetDocument(string coll, string docId, string reqId, string o, string s, string e);
+    [DllImport("__Internal")] private static extern void JsCreateGuestAccount(string o, string s, string r);
+    [DllImport("__Internal")] private static extern void JsUpgradeGuestAccount(string oldUid, string newUid, string newPassword, string o, string s, string r);
+    [DllImport("__Internal")] private static extern void JsReloadPage();
     #endregion
 
     [Header("UI 元素")]
@@ -120,6 +127,9 @@ public class TcbManager : MonoBehaviour
     public TMP_InputField passwordInput;
     public Button registerButton;
     public Button loginButton;
+    public Button guestUpgradeButton; // 游客转正按钮
+    public Button logoutButton; // 退出登录按钮（非游客用户）
+    public Button backButton; // 返回主菜单按钮
     public TextMeshProUGUI statusText;
 
     public CanvasGroup loginCanvasGroup;
@@ -230,12 +240,12 @@ public class TcbManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("[TcbManager] 未登录，显示登录框。");
+            Debug.Log("[TcbManager] Not logged in; showing login panel.");
             // 未登录：开登录页，关主页
             SetCanvasGroupState(loginCanvasGroup, true);
             SetCanvasGroupState(mainMenuObjectGroup, false);
 
-            if (statusText) statusText.text = "请输入账号密码";
+            if (statusText) statusText.text = "Please enter username and password.";
         }
     }
 
@@ -244,10 +254,11 @@ public class TcbManager : MonoBehaviour
         string savedUid = PlayerPrefs.GetString(PREF_AUTO_LOGIN_UID, "");
         if (!string.IsNullOrEmpty(savedUid))
         {
-            Debug.Log($"[TcbManager] 检测到自动登录 UID: {savedUid}");
+            Debug.Log($"[TcbManager] Auto-login detected for UID: {savedUid}");
             CurrentUid = savedUid;
-            CurrentNickname = PlayerPrefs.GetString(PREF_AUTO_LOGIN_NICKNAME, "学员");
+            CurrentNickname = PlayerPrefs.GetString(PREF_AUTO_LOGIN_NICKNAME, "Student");
             IsAdmin = PlayerPrefs.GetInt(PREF_IS_ADMIN, 0) == 1;
+            UserLevel = PlayerPrefs.GetInt(PREF_USER_LEVEL, 0);
 
             if (LevelManager.instance != null) LevelManager.IsAdmin = IsAdmin;
 
@@ -256,6 +267,12 @@ public class TcbManager : MonoBehaviour
 
             // 触发静默校验（不挡UI）
             SilentReauth();
+        }
+        else
+        {
+            // 【新增：游客机制】首次访问，自动创建游客账号
+            Debug.Log("[TcbManager] First visit; creating guest account...");
+            CreateGuestAccount();
         }
     }
 
@@ -269,8 +286,141 @@ public class TcbManager : MonoBehaviour
 
     // 静默回调
     public void OnAdminCheckResult_Silent(string jsonOrEmpty) { OnAdminCheckResult(jsonOrEmpty); }
-    public void OnAuthError_Silent(string err) { Debug.LogWarning("静默更新失败: " + err); }
+    public void OnAuthError_Silent(string err) 
+    { 
+        Debug.LogWarning("Silent refresh failed: " + err);
+        
+        if (!string.IsNullOrEmpty(CurrentUid) && CurrentUid.StartsWith("Guest") && 
+            (err.Contains("不存在") || err.Contains("NotExist") || err.Contains("not exist")))
+        {
+            Debug.LogWarning($"[TcbManager] Guest account {CurrentUid} failed auth (maybe removed); clearing cache and reloading.");
+            ClearCacheAndReload();
+        }
+    }
 
+    // 清除缓存并刷新页面
+    private void ClearCacheAndReload()
+    {
+        PlayerPrefs.DeleteKey(PREF_AUTO_LOGIN_UID);
+        PlayerPrefs.DeleteKey(PREF_AUTO_LOGIN_NICKNAME);
+        PlayerPrefs.DeleteKey(PREF_IS_ADMIN);
+        PlayerPrefs.DeleteKey(PREF_USER_LEVEL);
+        PlayerPrefs.Save();
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        JsReloadPage();
+#else
+        Debug.Log("[TcbManager] Editor mode: not reloading page.");
+#endif
+    }
+
+    // =========================================================
+    // 游客账号管理
+    // =========================================================
+
+    private void CreateGuestAccount()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        if (statusText) statusText.text = "Creating guest account...";
+        JsCreateGuestAccount(gameObject.name, "OnGuestAccountCreated", "OnGuestAccountError");
+#else
+        // 编辑器模式下直接创建本地游客
+        OnGuestAccountCreated("GuestEditor_" + System.Guid.NewGuid().ToString().Substring(0, 8));
+#endif
+    }
+
+    public void OnGuestAccountCreated(string guestUid)
+    {
+        Debug.Log($"[TcbManager] 游客账号创建成功: {guestUid}");
+        
+        CurrentUid = guestUid;
+        CurrentNickname = guestUid; // 直接使用 Guest1, Guest2... 作为昵称
+        UserLevel = -1; // 游客等级
+        IsAdmin = false;
+        AdminLevel = 0;
+        
+        // 保存到本地，下次自动登录
+        PlayerPrefs.SetString(PREF_AUTO_LOGIN_UID, guestUid);
+        PlayerPrefs.SetString(PREF_AUTO_LOGIN_NICKNAME, CurrentNickname);
+        PlayerPrefs.SetInt(PREF_IS_ADMIN, 0);
+        PlayerPrefs.SetInt(PREF_USER_LEVEL, -1);
+        PlayerPrefs.Save();
+        
+        // 标记为已登录
+        isLoggedIn = true;
+        
+        // 更新 UI
+        UpdateUIState();
+        
+        if (statusText) statusText.text = "";
+    }
+
+    public void OnGuestAccountError(string error)
+    {
+        Debug.LogError($"[TcbManager] 游客账号创建失败: {error}");
+        if (statusText) statusText.text = "Failed to create guest account. Please refresh.";
+    }
+
+    // 游客转正
+    public void UpgradeGuestAccount(string newUsername, string newPassword)
+    {
+        if (UserLevel != -1)
+        {
+            Debug.LogWarning("[TcbManager] 当前不是游客账号，无需转正");
+            if (statusText) statusText.text = "You are not a guest user.";
+            return;
+        }
+
+        if (string.IsNullOrEmpty(newUsername) || string.IsNullOrEmpty(newPassword))
+        {
+            if (statusText) statusText.text = "Username and password cannot be empty.";
+            return;
+        }
+
+        if (statusText) statusText.text = "Upgrading account...";
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        JsUpgradeGuestAccount(CurrentUid, newUsername, newPassword, gameObject.name, "OnUpgradeSuccess", "OnUpgradeError");
+#else
+        OnUpgradeSuccess(newUsername);
+#endif
+    }
+
+    public void OnUpgradeSuccess(string newUid)
+    {
+        Debug.Log($"[TcbManager] 转正成功！新账号: {newUid}");
+        
+        string oldUid = CurrentUid;
+        
+        // 更新当前用户信息
+        CurrentUid = newUid;
+        CurrentNickname = newUid;
+        UserLevel = 0; // 学员等级
+        IsAdmin = false;
+        AdminLevel = 0;
+        
+        // 保存到本地
+        PlayerPrefs.SetString(PREF_AUTO_LOGIN_UID, newUid);
+        PlayerPrefs.SetString(PREF_AUTO_LOGIN_NICKNAME, CurrentNickname);
+        PlayerPrefs.SetInt(PREF_USER_LEVEL, 0);
+        PlayerPrefs.SetInt(PREF_IS_ADMIN, 0);
+        PlayerPrefs.Save();
+        
+        if (statusText) statusText.text = "Upgrade successful! Welcome!";
+        
+        // 更新UI
+        var profile = FindObjectOfType<UserProfileManager>();
+        if (profile) profile.UpdateUI();
+        
+        // 隐藏登录框，显示主菜单
+        UpdateUIState();
+    }
+
+    public void OnUpgradeError(string error)
+    {
+        Debug.LogError($"[TcbManager] 转正失败: {error}");
+        if (statusText) statusText.text = "Upgrade failed: " + error;
+    }
 
     private void SetCanvasGroupState(CanvasGroup cg, bool visible)
     {
@@ -332,6 +482,10 @@ public class TcbManager : MonoBehaviour
                 var allBtns = panelObj.GetComponentsInChildren<Button>(true);
                 loginButton = allBtns.FirstOrDefault(x => x.name == "Btn_Login");
                 registerButton = allBtns.FirstOrDefault(x => x.name == "Btn_Register");
+                guestUpgradeButton = allBtns.FirstOrDefault(x => x.name == "Btn_GuestUpgrade");
+                logoutButton = allBtns.FirstOrDefault(x => x.name == "Btn_Logout");
+                backButton = allBtns.FirstOrDefault(x => x.name == "Btn_Back");
+                
                 var allTexts = panelObj.GetComponentsInChildren<TextMeshProUGUI>(true);
                 statusText = allTexts.FirstOrDefault(x => x.name == "Text_Status");
 
@@ -344,6 +498,23 @@ public class TcbManager : MonoBehaviour
                 {
                     registerButton.onClick.RemoveAllListeners();
                     registerButton.onClick.AddListener(RegisterUser);
+                }
+                if (guestUpgradeButton != null)
+                {
+                    guestUpgradeButton.onClick.RemoveAllListeners();
+                    guestUpgradeButton.onClick.AddListener(OnGuestUpgradeButtonClicked);
+                }
+                if (logoutButton != null)
+                {
+                    logoutButton.onClick.RemoveAllListeners();
+                    logoutButton.onClick.AddListener(LogoutUser);
+                    // 游客不显示退出登录按钮
+                    logoutButton.gameObject.SetActive(UserLevel != -1);
+                }
+                if (backButton != null)
+                {
+                    backButton.onClick.RemoveAllListeners();
+                    backButton.onClick.AddListener(BackToMainMenu);
                 }
             }
             else
@@ -392,23 +563,82 @@ public class TcbManager : MonoBehaviour
         CallJsAuth(false);
     }
 
+    // 游客转正按钮点击
+    public void OnGuestUpgradeButtonClicked()
+    {
+        Debug.Log("[TcbManager] 点击了游客转正按钮");
+        if (emailInput == null || passwordInput == null) return;
+        
+        string newUsername = emailInput.text;
+        string newPassword = passwordInput.text;
+        
+        UpgradeGuestAccount(newUsername, newPassword);
+    }
+
+    // 退出登录
+    public void LogoutUser()
+    {
+        Debug.Log("[TcbManager] 退出登录");
+        
+        // 清除所有本地缓存
+        PlayerPrefs.DeleteKey(PREF_AUTO_LOGIN_UID);
+        PlayerPrefs.DeleteKey(PREF_AUTO_LOGIN_NICKNAME);
+        PlayerPrefs.DeleteKey(PREF_IS_ADMIN);
+        PlayerPrefs.DeleteKey(PREF_USER_LEVEL);
+        PlayerPrefs.Save();
+        
+        // 清除当前状态
+        isLoggedIn = false;
+        CurrentUid = "";
+        CurrentNickname = "";
+        UserLevel = 0;
+        IsAdmin = false;
+        AdminLevel = 0;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // 调用腾讯云登出
+        JsLogoutUser();
+        // 刷新页面（强制重新进入，创建新游客账号）
+        JsReloadPage();
+#else
+        Debug.Log("[TcbManager] 编辑器模式下不刷新页面");
+#endif
+    }
+
+    // 返回主菜单
+    public void BackToMainMenu()
+    {
+        Debug.Log("[TcbManager] 返回主菜单");
+        
+        // 隐藏登录面板
+        SetCanvasGroupState(loginCanvasGroup, false);
+        
+        // 显示主菜单
+        SetCanvasGroupState(mainMenuObjectGroup, true);
+        
+        // 清空输入框和状态文本
+        if (emailInput != null) emailInput.text = "";
+        if (passwordInput != null) passwordInput.text = "";
+        if (statusText != null) statusText.text = "";
+    }
+
     private void CallJsAuth(bool isRegister)
     {
         if (emailInput == null || passwordInput == null) BindUIComponentsSafe();
         if (emailInput == null || passwordInput == null)
         {
-            if (statusText) statusText.text = "UI 错误：找不到输入框";
+            if (statusText) statusText.text = "UI Error: Input fields not found.";
             return;
         }
 
         string email = emailInput.text;
         string password = passwordInput.text;
 
-        if (statusText) statusText.text = "正在连接...";
+        if (statusText) statusText.text = "Connecting...";
 
         if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
         {
-            if (statusText) statusText.text = "账号或密码不能为空";
+            if (statusText) statusText.text = "Username and password cannot be empty.";
             return;
         }
 
@@ -421,7 +651,7 @@ public class TcbManager : MonoBehaviour
     public void OnLoginOrRegisterSuccess(string uid)
     {
         CurrentUid = uid;
-        if (statusText != null) statusText.text = "登录成功，加载数据...";
+        if (statusText != null) statusText.text = "Login successful, loading...";
 
         // 【核心修复】保存自动登录信息
         PlayerPrefs.SetString(PREF_AUTO_LOGIN_UID, uid);
@@ -439,7 +669,10 @@ public class TcbManager : MonoBehaviour
         {
             var data = JsonUtility.FromJson<UserProfileData>(json);
             CurrentNickname = data.nickname;
+            UserLevel = data.userLevel;
+            
             PlayerPrefs.SetString(PREF_AUTO_LOGIN_NICKNAME, CurrentNickname);
+            PlayerPrefs.SetInt(PREF_USER_LEVEL, UserLevel);
             PlayerPrefs.Save();
 
             var p = FindObjectOfType<UserProfileManager>();
@@ -447,8 +680,16 @@ public class TcbManager : MonoBehaviour
         }
         else
         {
+            // 【新增】如果是游客账号且不存在，清除缓存并刷新页面
+            if (!string.IsNullOrEmpty(CurrentUid) && CurrentUid.StartsWith("Guest"))
+            {
+                Debug.LogWarning($"[TcbManager] 游客账号 {CurrentUid} 在数据库中不存在（可能已过期），清除缓存并刷新页面");
+                ClearCacheAndReload();
+                return;
+            }
+
 #if UNITY_WEBGL && !UNITY_EDITOR
-            string defaultName = "学员_" + CurrentUid.Substring(0, 4);
+            string defaultName = "Student_" + CurrentUid.Substring(0, 4);
             JsCreateUserProfile(CurrentUid, defaultName, gameObject.name, "OnCreateProfileSuccess", "OnAuthError");
 #endif
         }
@@ -475,18 +716,28 @@ public class TcbManager : MonoBehaviour
         {
             IsAdmin = true;
             if (LevelManager.instance != null) LevelManager.IsAdmin = true;
-            try { var d = JsonUtility.FromJson<AdminData>(jsonOrEmpty); AdminLevel = d.level; } catch { AdminLevel = 1; }
+            try { 
+                var d = JsonUtility.FromJson<AdminData>(jsonOrEmpty); 
+                AdminLevel = d.level;
+                UserLevel = d.userLevel; // 读取用户等级
+            } catch { 
+                AdminLevel = 1;
+                UserLevel = 1; // 管理员默认等级为1
+            }
             if (levelEditorButton) levelEditorButton.gameObject.SetActive(true);
         }
         else
         {
             IsAdmin = false;
             AdminLevel = 0;
+            // 如果之前是管理员，现在撤销权限，降为学员等级（游客-1保持不变）
+            if (UserLevel > 0) UserLevel = 0;
             if (LevelManager.instance != null) LevelManager.IsAdmin = false;
             if (levelEditorButton) levelEditorButton.gameObject.SetActive(false);
         }
 
         PlayerPrefs.SetInt(PREF_IS_ADMIN, IsAdmin ? 1 : 0);
+        PlayerPrefs.SetInt(PREF_USER_LEVEL, UserLevel);
         PlayerPrefs.Save();
 
         var p = FindObjectOfType<UserProfileManager>();
@@ -526,7 +777,7 @@ public class TcbManager : MonoBehaviour
 
     public void OnAuthError(string error)
     {
-        if (statusText != null) statusText.text = "错误：" + error;
+        if (statusText != null) statusText.text = "Error: " + error;
         Debug.LogError("[TcbManager] Auth Error: " + error);
     }
 
